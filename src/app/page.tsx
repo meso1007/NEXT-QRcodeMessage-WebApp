@@ -205,6 +205,8 @@ export default function HomePage() {
 
               <div className="inline-block bg-gradient-to-br from-pink-50 to-purple-50 p-8 rounded-2xl mb-6 border border-pink-100 shadow-inner">
                 <Image
+                  width={500}
+                  height={500}
                   src={qrCodeUrl}
                   alt="Generated QR Code"
                   className="mx-auto animate-scale-in"

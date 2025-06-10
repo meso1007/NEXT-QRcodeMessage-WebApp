@@ -329,7 +329,7 @@ export default function FAQPage() {
                 <div className="space-y-12">
                     {filteredData.map((category, categoryIndex) => (
                         <div
-                            key={categoryIndex}
+                            key={category.category}
                             ref={(el) => { categoryRefs.current[categoryIndex] = el }}
                             className="space-y-6"
                         >

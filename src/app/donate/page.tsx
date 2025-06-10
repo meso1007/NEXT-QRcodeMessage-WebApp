@@ -11,12 +11,9 @@ if (typeof window !== "undefined") {
 }
 
 interface StatCardProps {
-    stat: {
-        icon: React.ReactElement;
-        number: string;
-        label: string;
-    };
-    index: number;
+    icon: React.ReactNode;
+    value: string;
+    label: string;
 }
 
 interface Testimonial {
@@ -214,7 +211,7 @@ const PaymentMethodCard = ({ method, isSelected, onClick }: PaymentMethodCardPro
   );
 };
 
-const StatCard = ({ stat, index }: StatCardProps) => {
+const StatCard = ({ icon, value, label }: StatCardProps) => {
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -222,17 +219,17 @@ const StatCard = ({ stat, index }: StatCardProps) => {
       gsap.fromTo(
         cardRef.current,
         { opacity: 0, scale: 0.8 },
-        { opacity: 1, scale: 1, duration: 0.8, delay: index * 0.1 }
+        { opacity: 1, scale: 1, duration: 0.8, delay: 0.1 }
       );
     }
-  }, [index]);
+  }, []);
   return (
     <div ref={cardRef} className="text-center p-6 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg">
       <div className="bg-gradient-to-br from-blue-600 to-purple-700 rounded-full p-4 inline-flex mb-4">
-        {stat.icon}
+        {icon}
       </div>
-      <div className="text-3xl font-bold text-gray-800 mb-2">{stat.number}</div>
-      <div className="text-gray-600">{stat.label}</div>
+      <div className="text-3xl font-bold text-gray-800 mb-2">{value}</div>
+      <div className="text-gray-600">{label}</div>
     </div>
   );
 };
@@ -360,7 +357,12 @@ const DonationPage = () => {
         {/* Impact Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {impactStats.map((stat, index) => (
-            <StatCard key={index} stat={stat} index={index} />
+            <StatCard
+              key={index}
+              icon={stat.icon}
+              value={stat.number}
+              label={stat.label}
+            />
           ))}
         </div>
 

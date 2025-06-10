@@ -1,17 +1,14 @@
 "use client"
 
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { Shield, Calendar, CheckCircle, Eye, Lock, Database, FileText, Globe, Mail, Phone, MapPin, Clock } from 'lucide-react';
+import { Shield, Calendar, CheckCircle, Eye, Lock, Database, FileText, Globe, Mail, MapPin, Clock } from 'lucide-react';
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// GSAPライブラリの代替実装
-type GSAPOptions = {
-  duration?: number;
-  delay?: number;
-  y?: number;
-  x?: number;
-  opacity?: number | string;
-  scale?: number;
-};
+// Register the plugin
+if (typeof window !== "undefined") {
+    gsap.registerPlugin(ScrollTrigger);
+}
 
 type Subsection = {
   title: string;
@@ -30,73 +27,6 @@ type PrivacySectionProps = {
   section: Section;
   index: number;
 };
-
-const gsap = {
-  timeline: () => ({
-    from: (selector: string | Element, options: GSAPOptions) => {
-      const elements = typeof selector === 'string'
-        ? document.querySelectorAll(selector)
-        : (selector ? [selector] : []);
-
-      Array.from(elements).forEach(el => {
-        if (el && el instanceof HTMLElement) {
-          el.style.transition = `all ${options.duration || 1}s ease-out`;
-          requestAnimationFrame(() => {
-            Object.keys(options).forEach(key => {
-              if (key !== 'duration' && key !== 'delay') {
-                if (key === 'y') {
-                  el.style.transform = `translateY(0px)`;
-                  el.style.opacity = '1';
-                } else if (key === 'opacity') {
-                  el.style.opacity = '1';
-                } else if (key === 'scale') {
-                  el.style.transform = `scale(1)`;
-                }
-              }
-            });
-          });
-        }
-      });
-      return this;
-    },
-    stagger: () => this,
-    delay: () => this
-  }),
-  fromTo: (element: HTMLElement, from: GSAPOptions, to: GSAPOptions) => {
-    if (!element || !element.style) return;
-
-    Object.keys(from).forEach(key => {
-      if (key === 'y') {
-        element.style.transform = `translateY(${from[key]}px)`;
-      } else if (key === 'opacity') {
-        element.style.opacity = String(from[key]);
-      } else if (key === 'scale') {
-        element.style.transform = `scale(${from[key]})`;
-      } else if (key === 'x') {
-        element.style.transform = `translateX(${from[key]}px)`;
-      }
-    });
-
-    element.style.transition = `all ${to.duration || 1}s ease-out`;
-
-    setTimeout(() => {
-      Object.keys(to).forEach(key => {
-        if (key !== 'duration' && key !== 'delay' && key !== 'stagger') {
-          if (key === 'y') {
-            element.style.transform = `translateY(${to[key]}px)`;
-          } else if (key === 'opacity') {
-            element.style.opacity = String(to[key]);
-          } else if (key === 'scale') {
-            element.style.transform = `scale(${to[key]})`;
-          } else if (key === 'x') {
-            element.style.transform = `translateX(${to[key]}px)`;
-          }
-        }
-      });
-    }, (to.delay || 0) * 1000);
-  }
-};
-
 
 const privacyData = [
   {
@@ -483,14 +413,7 @@ const PrivacyPolicyPage = () => {
                     <Mail className="w-4 h-4" />
                     <div>
                       <p className="font-semibold">メール</p>
-                      <p className="text-blue-200">privacy@example.com</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Phone className="w-4 h-4" />
-                    <div>
-                      <p className="font-semibold">電話</p>
-                      <p className="text-blue-200">03-1234-5678</p>
+                      <p className="text-blue-200">otodokelife@gmail.com</p>
                     </div>
                   </div>
                 </div>
@@ -506,7 +429,7 @@ const PrivacyPolicyPage = () => {
                     <MapPin className="w-4 h-4" />
                     <div>
                       <p className="font-semibold">データ保護責任者</p>
-                      <p className="text-blue-200">田中 太郎</p>
+                      <p className="text-blue-200">Shoya</p>
                     </div>
                   </div>
                 </div>

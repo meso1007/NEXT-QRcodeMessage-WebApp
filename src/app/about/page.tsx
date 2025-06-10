@@ -22,7 +22,7 @@ interface Imageprops {
 const CustomImage = forwardRef<HTMLImageElement, Imageprops>(({ src, alt, width, height, className }, ref) => (
     <NextImage
         ref={ref}
-        src={src}
+        src={src.startsWith('/') ? src : `/${src}`}
         alt={alt}
         width={width}
         height={height}

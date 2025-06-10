@@ -146,10 +146,11 @@ const TableOfContents = ({ sections, activeSection, onSectionClick }: TableOfCon
                     <button
                         key={section.id}
                         onClick={() => onSectionClick(section.id)}
-                        className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-300 flex items-center space-x-2 ${activeSection === section.id
-                            ? 'bg-blue-100 text-blue-700 font-medium'
-                            : 'text-gray-600 hover:bg-gray-50'
-                            }`}
+                        className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-300 flex items-center space-x-2 ${
+                            activeSection === section.id
+                                ? 'bg-blue-100 text-blue-700 font-medium'
+                                : 'text-gray-600 hover:bg-gray-50'
+                        }`}
                     >
                         <span className="text-blue-500">{section.icon}</span>
                         <span className="text-sm">{section.title}</span>

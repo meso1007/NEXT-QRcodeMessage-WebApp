@@ -1,37 +1,99 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# おくる想い
 
-## Getting Started
+## 概要
+「おくる想い」は、大切な人へメッセージを届けるためのプラットフォームです。記念日や日常の感謝など、さまざまな場面でも活用でき、あなたの気持ちを安心してカタチにして残すことができます。
 
-First, run the development server:
+## ページ紹介
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### ホームページ（/）
+- メッセージ作成フォームとQRコード生成
+- サービスの概要説明
+- 直感的なUIで誰でも簡単に利用可能
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+![ホームページ](./screenshots/home.png)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### レター表示ページ（/letter）
+- QRコードからアクセスしたメッセージの閲覧
+- アニメーション付きでメッセージが表示される
+- 送信者名・日付も表示
 
-## Learn More
+![レター表示ページ](./screenshots/letter.png)
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 利用規約ページ（/terms）
+- サービス利用規約の詳細表示
+- 目次ナビゲーションで各セクションにジャンプ可能
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+![利用規約ページ](./screenshots/terms.png)
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### プライバシーポリシーページ（/privacy）
+- 個人情報の取り扱い方針を明記
+- お問い合わせ先情報も掲載
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# NEXT-QRcodeMessage-WebApp
+![プライバシーポリシーページ](./screenshots/privacy.png)
+
+---
+
+### FAQページ（/faq）
+- よくある質問と回答をカテゴリごとに掲載
+- 検索機能付きで疑問をすぐに解決
+
+![FAQページ](./screenshots/faq.png)
+
+---
+
+### 寄付ページ（/donate）
+- サービス支援のための寄付案内
+- 寄付方法や支援者への感謝メッセージ
+
+![寄付ページ](./screenshots/donate.png)
+
+---
+
+### Aboutページ（/about）
+- サービス開発者の紹介
+- サービスの想い・背景
+- SNSリンク
+
+![Aboutページ](./screenshots/about.png)
+
+---
+
+## 機能
+- メッセージの作成とQRコード化
+- プライバシーポリシーと利用規約の表示
+- よくある質問（FAQ）セクション
+- お問い合わせフォーム
+
+## 技術スタック
+- **フロントエンド**: React, Next.js, TypeScript
+- **スタイリング**: Tailwind CSS
+- **アニメーション**: GSAP, Framer Motion
+- **アイコン**: Lucide React
+
+## セットアップ手順
+1. リポジトリをクローン
+   ```bash
+   git clone https://github.com/yourusername/otodoke.git
+   cd otodoke
+   ```
+
+2. 依存関係のインストール
+   ```bash
+   npm install
+   ```
+
+3. 開発サーバーの起動
+   ```bash
+   npm run dev
+   ```
+
+4. ブラウザで `http://localhost:3000` にアクセス
+
+## ライセンス
+MIT
