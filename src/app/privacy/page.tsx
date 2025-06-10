@@ -1,18 +1,45 @@
 "use client"
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { FC, ReactElement, useEffect, useRef, useState } from 'react';
 import { Shield, Calendar, CheckCircle, Eye, Lock, Database, FileText, Globe, Mail, Phone, MapPin, Clock } from 'lucide-react';
 
 // GSAPライブラリの代替実装
+type GSAPOptions = {
+  duration?: number;
+  delay?: number;
+  y?: number;
+  x?: number;
+  opacity?: number | string;
+  scale?: number;
+};
+
+type Subsection = {
+  title: string;
+  content: string;
+};
+
+type Section = {
+  id: string;
+  title: string;
+  content?: string;
+  icon: ReactElement<any>;
+  subsections?: Subsection[];
+};
+
+type PrivacySectionProps = {
+  section: Section;
+  index: number;
+};
+
 const gsap = {
   timeline: () => ({
-    from: (selector, options) => {
-      const elements = typeof selector === 'string' 
+    from: (selector: string | Element, options: GSAPOptions) => {
+      const elements = typeof selector === 'string'
         ? document.querySelectorAll(selector)
         : (selector ? [selector] : []);
-      
+
       Array.from(elements).forEach(el => {
-        if (el && el.style) {
+        if (el && el instanceof HTMLElement) {
           el.style.transition = `all ${options.duration || 1}s ease-out`;
           requestAnimationFrame(() => {
             Object.keys(options).forEach(key => {
@@ -35,31 +62,30 @@ const gsap = {
     stagger: () => this,
     delay: () => this
   }),
-  fromTo: (element, from, to) => {
+  fromTo: (element: HTMLElement, from: GSAPOptions, to: GSAPOptions) => {
     if (!element || !element.style) return;
-    
-    // 初期状態を設定
+
     Object.keys(from).forEach(key => {
       if (key === 'y') {
         element.style.transform = `translateY(${from[key]}px)`;
       } else if (key === 'opacity') {
-        element.style.opacity = from[key];
+        element.style.opacity = String(from[key]);
       } else if (key === 'scale') {
         element.style.transform = `scale(${from[key]})`;
       } else if (key === 'x') {
         element.style.transform = `translateX(${from[key]}px)`;
       }
     });
-    
+
     element.style.transition = `all ${to.duration || 1}s ease-out`;
-    
+
     setTimeout(() => {
       Object.keys(to).forEach(key => {
         if (key !== 'duration' && key !== 'delay' && key !== 'stagger') {
           if (key === 'y') {
             element.style.transform = `translateY(${to[key]}px)`;
           } else if (key === 'opacity') {
-            element.style.opacity = to[key];
+            element.style.opacity = String(to[key]);
           } else if (key === 'scale') {
             element.style.transform = `scale(${to[key]})`;
           } else if (key === 'x') {
@@ -70,6 +96,7 @@ const gsap = {
     }, (to.delay || 0) * 1000);
   }
 };
+
 
 const privacyData = [
   {
@@ -198,8 +225,18 @@ const privacyData = [
   }
 ];
 
-const TableOfContents = ({ sections, activeSection, onSectionClick }) => {
-  const tocRef = useRef(null);
+type TableOfContentsProps = {
+  sections: Section[];
+  activeSection: string;
+  onSectionClick: (id: string) => void;
+};
+
+const TableOfContents: FC<TableOfContentsProps> = ({
+  sections,
+  activeSection,
+  onSectionClick,
+}) => {
+  const tocRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (tocRef.current) {
@@ -223,11 +260,10 @@ const TableOfContents = ({ sections, activeSection, onSectionClick }) => {
             <li key={section.id}>
               <button
                 onClick={() => onSectionClick(section.id)}
-                className={`flex items-center space-x-2 w-full text-left px-3 py-2 rounded-lg transition-colors text-sm ${
-                  activeSection === section.id
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'text-gray-600 hover:bg-gray-100'
-                }`}
+                className={`flex items-center space-x-2 w-full text-left px-3 py-2 rounded-lg transition-colors text-sm ${activeSection === section.id
+                  ? 'bg-blue-100 text-blue-700'
+                  : 'text-gray-600 hover:bg-gray-100'
+                  }`}
               >
                 {section.icon}
                 <span>{section.title}</span>
@@ -240,8 +276,8 @@ const TableOfContents = ({ sections, activeSection, onSectionClick }) => {
   );
 };
 
-const PrivacySection = ({ section, index }) => {
-  const sectionRef = useRef(null);
+const PrivacySection: FC<PrivacySectionProps> = ({ section, index }) => {
+  const sectionRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (sectionRef.current) {
@@ -261,7 +297,9 @@ const PrivacySection = ({ section, index }) => {
     >
       <div className="flex items-center space-x-3 mb-6">
         <div className="bg-gradient-to-br from-blue-600 to-purple-700 rounded-full p-3 shadow-lg">
-          {React.cloneElement(section.icon, { className: "text-white w-5 h-5" })}
+          {React.cloneElement(section.icon, {
+            className: "text-white w-5 h-5",
+          })}
         </div>
         <h2 className="text-2xl font-bold text-gray-800">{section.title}</h2>
       </div>
@@ -275,9 +313,16 @@ const PrivacySection = ({ section, index }) => {
       {section.subsections && (
         <div className="space-y-4">
           {section.subsections.map((subsection, subIndex) => (
-            <div key={subIndex} className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-4 border-l-4 border-blue-400">
-              <h4 className="font-semibold text-gray-800 mb-2">{subsection.title}</h4>
-              <p className="text-gray-700 text-sm leading-relaxed">{subsection.content}</p>
+            <div
+              key={subIndex}
+              className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-4 border-l-4 border-blue-400"
+            >
+              <h4 className="font-semibold text-gray-800 mb-2">
+                {subsection.title}
+              </h4>
+              <p className="text-gray-700 text-sm leading-relaxed">
+                {subsection.content}
+              </p>
             </div>
           ))}
         </div>
@@ -286,48 +331,49 @@ const PrivacySection = ({ section, index }) => {
   );
 };
 
+
 const PrivacyPolicyPage = () => {
   const containerRef = useRef(null);
-  const headerRef = useRef(null);
+  const headerRef = useRef<HTMLDivElement | null>(null);
   const [activeSection, setActiveSection] = useState('overview');
 
   useEffect(() => {
     // ヘッダーアニメーション
     if (headerRef.current) {
-      const iconEl = headerRef.current.querySelector('.header-icon');
+      const iconEl = headerRef.current?.querySelector('.header-icon') as HTMLElement | null;
       const titleEl = headerRef.current.querySelector('h1');
       const descEl = headerRef.current.querySelector('p');
       const metaEls = headerRef.current.querySelectorAll('.header-meta > *');
-      
+
       if (iconEl) {
-        gsap.fromTo(iconEl, 
-          { scale: 0, opacity: 0 }, 
+        gsap.fromTo(iconEl,
+          { scale: 0, opacity: 0 },
           { scale: 1, opacity: 1, duration: 0.8, delay: 0.2 }
         );
       }
-      
+
       if (titleEl) {
         gsap.fromTo(titleEl,
           { y: 30, opacity: 0 },
           { y: 0, opacity: 1, duration: 0.8, delay: 0.4 }
         );
       }
-      
+
       if (descEl) {
         gsap.fromTo(descEl,
           { y: 20, opacity: 0 },
           { y: 0, opacity: 1, duration: 0.6, delay: 0.6 }
         );
       }
-      
+
       metaEls.forEach((el, index) => {
-        if (el) {
-          gsap.fromTo(el,
-            { y: 15, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.5, delay: 0.8 + index * 0.1 }
-          );
-        }
+        const htmlEl = el as HTMLElement;
+        gsap.fromTo(htmlEl,
+          { y: 15, opacity: 0 },
+          { y: 0, opacity: 1, duration: 0.5, delay: 0.8 + index * 0.1 }
+        );
       });
+
     }
 
     // スクロール監視
@@ -353,12 +399,13 @@ const PrivacyPolicyPage = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const scrollToSection = (sectionId) => {
+  const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
+
 
   return (
     <div
@@ -390,12 +437,12 @@ const PrivacyPolicyPage = () => {
           <div className="header-meta flex items-center justify-center space-x-4 text-sm text-gray-500">
             <div className="flex items-center space-x-1">
               <Calendar className="w-4 h-4" />
-              <span>最終更新: 2024年12月1日</span>
+              <span>最終更新: 2025年6月10日</span>
             </div>
             <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
             <div className="flex items-center space-x-1">
               <CheckCircle className="w-4 h-4" />
-              <span>第2版</span>
+              <span>第1版</span>
             </div>
           </div>
         </div>
@@ -403,7 +450,7 @@ const PrivacyPolicyPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Table of Contents */}
           <div className="lg:col-span-1">
-            <TableOfContents 
+            <TableOfContents
               sections={privacyData}
               activeSection={activeSection}
               onSectionClick={scrollToSection}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, ReactElement } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -9,9 +9,12 @@ if (typeof window !== "undefined") {
     gsap.registerPlugin(ScrollTrigger);
 }
 
-// Icon components
-const FileText = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+interface IconProps {
+    className?: string;
+}
+
+const FileText = ({ className }: IconProps) => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
         <path d="M14,2 L14,8 L20,8 M14,2 L20,8 L20,20 C20,21.1045695 19.1045695,22 18,22 L6,22 C4.8954305,22 4,21.1045695 4,20 L4,4 C4,2.8954305 4.8954305,2 6,2 L14,2 Z"></path>
         <line x1="16" y1="13" x2="8" y2="13"></line>
         <line x1="16" y1="17" x2="8" y2="17"></line>
@@ -19,8 +22,8 @@ const FileText = () => (
     </svg>
 );
 
-const Calendar = () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const Calendar = ({ className }: IconProps) => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
         <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
         <line x1="16" y1="2" x2="16" y2="6"></line>
         <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -28,22 +31,22 @@ const Calendar = () => (
     </svg>
 );
 
-const CheckCircle = () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const CheckCircle = ({ className }: IconProps) => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
         <polyline points="22,4 12,14.01 9,11.01"></polyline>
     </svg>
 );
 
-const ArrowRight = () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const ArrowRight = ({ className }: IconProps) => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
         <line x1="5" y1="12" x2="19" y2="12"></line>
         <polyline points="12,5 19,12 12,19"></polyline>
     </svg>
 );
 
-const Shield = () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const Shield = ({ className }: IconProps) => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
     </svg>
 );
@@ -55,7 +58,8 @@ const termsData = [
         icon: <FileText />,
         content: [
             "本サービスは、ユーザーの想い出・メッセージを大切に保管し、必要に応じて共有できるプラットフォームです。",
-            "ご利用にはアカウント登録が必要です。登録情報は厳重に管理され、許可なく第三者に提供されることはありません。",
+            "本サービスは完全サーバーレス構成で、ユーザーのメッセージはサーバーに保存されません。",
+            "本サービスの利用は原則アカウント作成は必要ありません。",
             "サービスの内容は、ユーザー体験の向上のため、随時アップデート・改善される可能性があります。"
         ]
     },
@@ -64,10 +68,9 @@ const termsData = [
         title: "ユーザーの責任",
         icon: <CheckCircle />,
         content: [
-            "正確な情報でアカウントを作成・管理し、不正利用の防止に努めてください。",
-            "他人を傷つける内容、違法・不適切な投稿は禁止されています。",
+            "正確な情報で本サービスの利用は固く禁じられています。",
+            "他人を傷つける内容、違法・不適切な内容は禁止されています。",
             "システムへの不正アクセスや、サービス運営を妨げる行為は固く禁じられています。",
-            "営利目的での利用や複数アカウントの作成には、事前の許可が必要です。"
         ]
     },
     {
@@ -75,9 +78,9 @@ const termsData = [
         title: "プライバシーとデータの取り扱い",
         icon: <Shield />,
         content: [
-            "ユーザー情報は最新のセキュリティ技術を用いて保護されています。",
-            "投稿された写真やメッセージの権利はユーザーに帰属しますが、サービス提供の範囲内で利用させていただきます。",
-            "データの利用・保存・第三者提供に関しては、プライバシーポリシーで詳しくご案内しています。",
+            "本サービスは非営利目的で提供されます。",
+            "ユーザーは本サービスを自己責任で利用し、作成されたメッセージの内容については自己の責任において管理してください。",
+            "法令または公序良俗に反する内容の入力や第三者の権利を侵害する内容の投稿は禁止します。",
             "ユーザーは、自身のアカウントやデータの削除をいつでも申請できます。"
         ]
     },
@@ -88,8 +91,8 @@ const termsData = [
         content: [
             "基本的に24時間利用可能ですが、メンテナンス等により一時停止する場合があります。",
             "機能の追加や調整などの変更が行われることがあります。",
-            "重要な変更は、事前にサービス内またはメールにてお知らせします。",
-            "自然災害など予期せぬ事態による停止には責任を負いかねます。"
+            "運営者は予告なくサービスの内容変更、停止、終了を行うことがあります。",
+            "その際、ユーザーへの個別通知は行いません。"
         ]
     },
     {
@@ -99,7 +102,7 @@ const termsData = [
         content: [
             "本サービスは現状のまま提供され、すべての目的に適合することを保証するものではありません。",
             "当社は、通常の利用において発生した損害について、重大な過失を除き責任を負いません。",
-            "賠償が必要な場合、直近12ヶ月間にお支払いいただいた料金を上限とします。",
+            "本サービスの利用により生じたトラブルや損害について、一切の責任を負いません。",
             "外部サービスとの連携に関するトラブルは、該当する提供元の責任となります。"
         ]
     },
@@ -116,8 +119,20 @@ const termsData = [
     }
 ];
 
+interface Section {
+    id: string;
+    title: string;
+    icon: ReactElement;
+    content: string[];
+}
 
-const TableOfContents = ({ sections, activeSection, onSectionClick }) => {
+interface TableOfContentsProps {
+    sections: Section[];
+    activeSection: string | null;
+    onSectionClick: (id: string) => void;
+}
+
+const TableOfContents = ({ sections, activeSection, onSectionClick }: TableOfContentsProps) => {
     const tocRef = useRef(null);
 
     return (
@@ -132,8 +147,8 @@ const TableOfContents = ({ sections, activeSection, onSectionClick }) => {
                         key={section.id}
                         onClick={() => onSectionClick(section.id)}
                         className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-300 flex items-center space-x-2 ${activeSection === section.id
-                                ? 'bg-blue-100 text-blue-700 font-medium'
-                                : 'text-gray-600 hover:bg-gray-50'
+                            ? 'bg-blue-100 text-blue-700 font-medium'
+                            : 'text-gray-600 hover:bg-gray-50'
                             }`}
                     >
                         <span className="text-blue-500">{section.icon}</span>
@@ -148,10 +163,15 @@ const TableOfContents = ({ sections, activeSection, onSectionClick }) => {
     );
 };
 
-const TermsSection = ({ section, index }) => {
+interface TermsSectionProps {
+    section: Section;
+    index: number;
+}
+
+const TermsSection = ({ section, index }: TermsSectionProps) => {
     const sectionRef = useRef(null);
     const titleRef = useRef(null);
-    const contentRef = useRef([]);
+    const contentRef = useRef<(HTMLParagraphElement | null)[]>([]);
 
     useEffect(() => {
         const ctx = gsap.context(() => {
@@ -209,7 +229,7 @@ const TermsSection = ({ section, index }) => {
                 {section.content.map((paragraph, pIndex) => (
                     <p
                         key={pIndex}
-                        ref={el => contentRef.current[pIndex] = el}
+                        ref={(el) => { contentRef.current[pIndex] = el }}
                         className="text-gray-700 leading-relaxed pl-2 border-l-2 border-blue-200"
                     >
                         {paragraph}
@@ -222,8 +242,8 @@ const TermsSection = ({ section, index }) => {
 
 export default function TermsPage() {
     const containerRef = useRef(null);
-    const headerRef = useRef(null);
-    const [activeSection, setActiveSection] = useState(null);
+    const headerRef = useRef<HTMLDivElement>(null);
+    const [activeSection, setActiveSection] = useState<string | null>(null);
 
     useEffect(() => {
         const ctx = gsap.context(() => {
@@ -243,13 +263,15 @@ export default function TermsPage() {
             });
 
             // Floating animation for header icon
-            gsap.to(headerRef.current.querySelector('.header-icon'), {
-                y: -10,
-                duration: 3,
-                ease: "power1.inOut",
-                yoyo: true,
-                repeat: -1,
-            });
+            if (headerRef.current) {
+                gsap.to(headerRef.current.querySelector('.header-icon'), {
+                    y: -10,
+                    duration: 3,
+                    ease: "power1.inOut",
+                    yoyo: true,
+                    repeat: -1,
+                });
+            }
 
             // Section observation for active section
             const sections = document.querySelectorAll('section[id]');
@@ -275,7 +297,7 @@ export default function TermsPage() {
         return () => ctx.revert();
     }, []);
 
-    const scrollToSection = (sectionId) => {
+    const scrollToSection = (sectionId: string) => {
         const element = document.getElementById(sectionId);
         if (element) {
             element.scrollIntoView({
@@ -291,11 +313,9 @@ export default function TermsPage() {
             ref={containerRef}
             className="min-h-screen py-20 px-6 md:px-10 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 relative overflow-hidden"
             style={{
-                backgroundImage: `
-          radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                backgroundImage: `radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
           radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
-          linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)
-        `,
+          linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)`,
             }}
         >
             <div className="max-w-7xl mx-auto">
@@ -316,12 +336,12 @@ export default function TermsPage() {
                     <div className="flex items-center justify-center space-x-4 text-sm text-gray-500">
                         <div className="flex items-center space-x-1">
                             <Calendar />
-                            <span>最終更新: 2024年12月1日</span>
+                            <span>最終更新: 2025年6月10日</span>
                         </div>
                         <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
                         <div className="flex items-center space-x-1">
                             <CheckCircle />
-                            <span>第3版</span>
+                            <span>第1版</span>
                         </div>
                     </div>
                 </div>

@@ -20,7 +20,7 @@ export default function Footer() {
                 <a href="/donate" className="hover:text-rose-400 transition-colors duration-300 hover:underline">寄付について</a>
             </div>
             <div className="mt-8 pt-8 border-t border-pink-100">
-                <p className="text-sm">© 2024 Memorial Message. Made with <span className="cursor-pointer hover:underline hover:text-blue-400" onClick={toProfile}>Shoya Horiuchi</span></p>
+                <p className="text-sm">© 2025 Otodoke Life. Made with <span className="cursor-pointer hover:underline hover:text-blue-400" onClick={toProfile}>Shoya Horiuchi</span></p>
             </div>
         </footer>
     );

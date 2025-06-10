@@ -15,26 +15,44 @@ if (typeof window !== "undefined") {
 type StarProps = {
     filled: boolean;
 };
+type ChevronDownProps = {
+    className?: string;
+};
 
 // Icon components
-const ChevronDown = ({ className }) => (
-    <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <polyline points="6,9 12,15 18,9"></polyline>
-    </svg>
+const ChevronDown = React.forwardRef<SVGSVGElement, ChevronDownProps>(
+    ({ className }, ref) => (
+        <svg
+            ref={ref}
+            className={className}
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+        >
+            <polyline points="6,9 12,15 18,9"></polyline>
+        </svg>
+    )
 );
 
-const Search = () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+interface IconProps {
+    className?: string;
+}
+
+const Search = ({ className }: IconProps) => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
         <circle cx="11" cy="11" r="8"></circle>
         <path d="m21 21-4.35-4.35"></path>
     </svg>
 );
 
-const HelpCircle = () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+const HelpCircle = ({ className }: IconProps) => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={className}>
         <circle cx="12" cy="12" r="10"></circle>
         <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-        <point cx="12" cy="17" r="1"></point>
+        <circle cx="12" cy="17" r="1"></circle>
     </svg>
 );
 
@@ -111,7 +129,16 @@ const FAQData = [
     }
 ];
 
-const FAQItem = ({ question, answer, index, isOpen, onToggle }) => {
+type FAQItemProps = {
+    question: string;
+    answer: string;
+    index: string;
+    isOpen: boolean;
+    onToggle: (index: string) => void;
+};
+
+
+const FAQItem = ({ question, answer, index, isOpen, onToggle }: FAQItemProps) => {
     const itemRef = useRef(null);
     const answerRef = useRef(null);
     const iconRef = useRef(null);
@@ -174,12 +201,11 @@ const FAQItem = ({ question, answer, index, isOpen, onToggle }) => {
 
 export default function FAQPage() {
     const containerRef = useRef(null);
-    const titleRef = useRef(null);
+    const titleRef = useRef<HTMLDivElement>(null);
     const searchRef = useRef(null);
-    const categoryRefs = useRef([]);
-    const [openItems, setOpenItems] = useState({});
+    const categoryRefs = useRef<(HTMLDivElement | null)[]>([]);
+    const [openItems, setOpenItems] = useState<{ [key: string]: boolean }>({});
     const [searchTerm, setSearchTerm] = useState("");
-    const [activeCategory, setActiveCategory] = useState(null);
 
     useEffect(() => {
         const ctx = gsap.context(() => {
@@ -224,26 +250,29 @@ export default function FAQPage() {
                 }, "-=0.4");
 
             // Floating animation for the title icon
-            gsap.to(titleRef.current.querySelector('svg'), {
-                y: -10,
-                duration: 2,
-                ease: "power1.inOut",
-                yoyo: true,
-                repeat: -1,
-            });
+            if (titleRef.current) {
+                gsap.to(titleRef.current.querySelector('svg'), {
+                    y: -10,
+                    duration: 2,
+                    ease: "power1.inOut",
+                    yoyo: true,
+                    repeat: -1,
+                });
+            }
 
         }, containerRef);
 
         return () => ctx.revert();
     }, []);
 
-    const handleToggle = (categoryIndex, itemIndex) => {
+    const handleToggle = (categoryIndex: number, itemIndex: number) => {
         const key = `${categoryIndex}-${itemIndex}`;
         setOpenItems(prev => ({
             ...prev,
             [key]: !prev[key]
         }));
     };
+
 
     const filteredData = FAQData.map(category => ({
         ...category,
@@ -303,7 +332,7 @@ export default function FAQPage() {
                     {filteredData.map((category, categoryIndex) => (
                         <div
                             key={categoryIndex}
-                            ref={el => categoryRefs.current[categoryIndex] = el}
+                            ref={(el) => { categoryRefs.current[categoryIndex] = el }}
                             className="space-y-6"
                         >
                             <div className="flex items-center space-x-3 mb-8">

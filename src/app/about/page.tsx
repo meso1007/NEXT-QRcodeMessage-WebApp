@@ -1,24 +1,35 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, forwardRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+// import Image from "next/image";
+import Link from "next/link";
 
 // Register the plugin
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-// Dummy components for Next.js replacements
-const Image = ({ src, alt, width, height, className }) => (
-  <img src={src} alt={alt} width={width} height={height} className={className} />
-);
+interface Imageprops {
+  src: string,
+  alt: string,
+  width: number,
+  height: number,
+  className: string
+}
 
-const Link = ({ href, children, className }) => (
-  <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
-    {children}
-  </a>
-);
+const Image = forwardRef<HTMLImageElement, Imageprops>(({ src, alt, width, height, className }, ref) => (
+  <img ref={ref} src={src} alt={alt} width={width} height={height} className={className} />
+));
+
+Image.displayName = 'Image';
+
+// const Link = ({ href, children, className }) => (
+//   <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
+//     {children}
+//   </a>
+// );
 
 const FiGithub = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -53,13 +64,13 @@ const FiGlobe = () => (
 export default function AboutPage() {
   const containerRef = useRef(null);
   const serviceCardRef = useRef(null);
-  const profileCardRef = useRef(null);
-  const profileImageRef = useRef(null);
-  const socialLinksRef = useRef<HTMLDivElement | null>(null);
-  const thanksRef = useRef(null);
-  const titleRef = useRef(null);
-  const paragraphsRef = useRef<HTMLElement[]>([]);
-  const profileTextRef = useRef<HTMLElement[]>([]);
+  const profileCardRef = useRef<HTMLDivElement>(null);
+  const profileImageRef = useRef<HTMLImageElement>(null);
+  const socialLinksRef = useRef<HTMLDivElement>(null!);
+  const thanksRef = useRef<HTMLDivElement>(null!);
+  const titleRef = useRef<HTMLDivElement>(null!);
+  const paragraphsRef = useRef<(HTMLParagraphElement | null)[]>([]);
+  const profileTextRef = useRef<(HTMLParagraphElement | null)[]>([]);
 
 
   useEffect(() => {
@@ -152,6 +163,7 @@ export default function AboutPage() {
 
       // Hover animations for cards
       [serviceCardRef.current, profileCardRef.current].forEach(card => {
+        if (!card) return;
         card.addEventListener('mouseenter', () => {
           gsap.to(card, {
             scale: 1.03,
@@ -222,6 +234,7 @@ export default function AboutPage() {
           start: "top 70%",
           end: "bottom 30%",
           onEnter: () => {
+            if (!paragraph) return;
             gsap.to(paragraph.querySelectorAll('strong, span'), {
               color: '#ec4899',
               scale: 1.05,
@@ -230,6 +243,7 @@ export default function AboutPage() {
             });
           },
           onLeave: () => {
+            if (!paragraph) return;
             gsap.to(paragraph.querySelectorAll('strong, span'), {
               color: '',
               scale: 1,
@@ -237,6 +251,7 @@ export default function AboutPage() {
             });
           },
           onEnterBack: () => {
+            if (!paragraph) return;
             gsap.to(paragraph.querySelectorAll('strong, span'), {
               color: '#ec4899',
               scale: 1.05,
@@ -245,6 +260,7 @@ export default function AboutPage() {
             });
           },
           onLeaveBack: () => {
+            if (!paragraph) return;
             gsap.to(paragraph.querySelectorAll('strong, span'), {
               color: '',
               scale: 1,
@@ -281,33 +297,49 @@ export default function AboutPage() {
               このサイトについて
             </h2>
             <p
-              ref={el => paragraphsRef.current[0] = el}
+              ref={(el) => {
+                paragraphsRef.current[0] = el;
+              }}
               className="text-gray-700 leading-relaxed mb-5 text-base opacity-0 transform translate-y-4"
             >
               このサービスは、<strong className="text-rose-500 font-semibold">大切な想い出やメッセージ</strong>を安心して残せる場所を作りたいという想いから生まれました。
               何気ない日々の記憶や、伝えられなかった気持ちを、やさしくかたちに残せるよう設計しています。
             </p>
             <p
-              ref={el => paragraphsRef.current[1] = el}
-              className="text-gray-700 leading-relaxed mb-5 text-base opacity-0 transform translate-y-4"
+              ref={(el) => {
+                paragraphsRef.current[1] = el;
+              }} className="text-gray-700 leading-relaxed mb-5 text-base opacity-0 transform translate-y-4"
             >
               現在は個人開発として運営していますが、技術・デザイン・想いを支えてくれる多くの人たちに助けられながら進めています。
               中でも、<span className="text-indigo-500 font-semibold">フィードバックをくれる仲間や技術的にアドバイスをくれる開発者の方々</span>には心から感謝しています。
             </p>
             <p
-              ref={el => paragraphsRef.current[2] = el}
-              className="text-gray-700 leading-relaxed mb-5 text-base opacity-0 transform translate-y-4"
+              ref={(el) => {
+                paragraphsRef.current[2] = el;
+              }} className="text-gray-700 leading-relaxed mb-5 text-base opacity-0 transform translate-y-4"
             >
               将来的には、<span className="text-indigo-500 font-semibold">自治体・教育機関・企業との連携</span>を通じて、
               より多くの人に安心して使っていただけるサービスへと育てていきたいと考えています。
             </p>
             <p
-              ref={el => paragraphsRef.current[3] = el}
-              className="text-gray-600 italic text-sm opacity-0 transform translate-y-4"
+              ref={(el) => {
+                paragraphsRef.current[3] = el;
+              }} className="text-gray-600 italic text-sm opacity-0 transform translate-y-4"
             >
               「思いを言葉にできる場所」を、ひとりでも多くの方へ。
             </p>
+            <p
+              ref={(el) => {
+                paragraphsRef.current[4] = el;
+              }} className="text-gray-700 leading-relaxed mt-6 text-base opacity-0 transform translate-y-4"
+            >
+              このサービスは、ご遺族の皆さまの深い悲しみや心残りを少しでも和らげることを願い、
+              大切な方への想いを書き残す場所を提供しています。
+              できる限り完全無料で安心して使っていただけるよう努めており、
+              この想いが一人でも多くの方の心に届き、救いとなることを願っています。
+            </p>
           </div>
+
 
           {/* 自己紹介 */}
           <div
@@ -327,33 +359,34 @@ export default function AboutPage() {
               />
             </div>
             <h3
-              ref={el => profileTextRef.current[0] = el}
+              ref={(el) => { profileTextRef.current[0] = el }}
               className="text-2xl font-bold text-gray-800 opacity-0 transform translate-y-4"
             >
               Shoya
             </h3>
             <p
-              ref={el => profileTextRef.current[1] = el}
+              ref={(el) => { profileTextRef.current[1] = el }}
               className="text-gray-600 text-sm mb-4 opacity-0 transform translate-y-4"
             >
               Web Developer / Designer
             </p>
             <p
-              ref={el => profileTextRef.current[2] = el}
+              ref={(el) => { profileTextRef.current[2] = el }}
               className="text-gray-700 text-sm leading-relaxed mb-4 opacity-0 transform translate-y-4"
             >
-              カナダでWeb開発を学び、<span className="text-purple-500 font-semibold">心に残る体験</span>を届けるプロダクトを目指して活動中。<br />
+              神奈川県藤沢市出身
+              学生時代にVancouver, CanadaでWeb開発を学び、<span className="text-purple-500 font-semibold">心に残る体験</span>を届けるプロダクトを目指して活動中。<br />
               アイディアと技術のあいだで試行錯誤しながら、「人の心に寄り添う」サービスを追求しています。
             </p>
             <p
-              ref={el => profileTextRef.current[3] = el}
+              ref={(el) => { profileTextRef.current[3] = el }}
               className="text-gray-700 text-sm leading-relaxed mb-4 opacity-0 transform translate-y-4"
             >
               このプロジェクトを通じて、<span className="text-rose-500 font-semibold">「誰かのために作る」ことの喜び</span>を再確認しています。
               多くの出会いや支えが、今の私を動かしています。
             </p>
             <p
-              ref={el => profileTextRef.current[4] = el}
+              ref={(el) => { profileTextRef.current[4] = el }}
               className="text-gray-500 text-xs opacity-0 transform translate-y-4"
             >
               趣味はWebアプリ開発、イラスト制作、作曲、そして異国の文化を探訪することです。
@@ -362,7 +395,7 @@ export default function AboutPage() {
               ref={socialLinksRef}
               className="text-black text-xl flex items-center justify-center mt-5 space-x-2"
             >
-                            <Link
+              <Link
                 href="http://99.79.63.2/"
                 className="hover:bg-rose-400 hover:text-gray-100 rounded-full p-2 duration-300 transform transition-all"
               >

@@ -10,8 +10,21 @@ export default function HomePage() {
   const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [showQR, setShowQR] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [isVisible, setIsVisible] = useState({});
-
+  const [isVisible, setIsVisible] = useState<VisibleSections>({
+    hero: false,
+    about: false,
+    contact: false,
+    stats: false,
+    features: false,
+  });
+  type VisibleSections = {
+    hero: boolean;
+    about?: boolean;
+    contact?: boolean;
+    stats?: boolean;
+    features?:boolean
+    // 他にあれば追加
+  };
   const heroRef = useRef(null);
   const featuresRef = useRef(null);
   const statsRef = useRef(null);

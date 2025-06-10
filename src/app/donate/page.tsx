@@ -1,12 +1,13 @@
 "use client"
-import React, { useEffect, useRef, useState } from 'react';
-import { Heart, Users, Target, TrendingUp, Shield, Gift, CreditCard, Building, Calendar, CheckCircle, Star, Award, Globe, Zap, DollarSign } from 'lucide-react';
+import React, { ReactNode, useEffect, useRef, useState, ReactElement, cloneElement } from 'react';
+import { Heart, Users, Target, Bird, Shield, Gift, CreditCard, Building, FolderDot, CheckCircle, Star, Award, Globe, Zap, DollarSign, Router, JapaneseYen } from 'lucide-react';
+import Link from 'next/link';
 
 // GSAPライブラリの代替実装
 const gsap = {
-  fromTo: (element, from, to) => {
+  fromTo: (element: HTMLElement, from: Record<string, any>, to: Record<string, any>) => {
     if (!element || !element.style) return;
-    
+
     // 初期状態を設定
     Object.keys(from).forEach(key => {
       if (key === 'y') {
@@ -19,9 +20,9 @@ const gsap = {
         element.style.transform = `translateX(${from[key]}px)`;
       }
     });
-    
+
     element.style.transition = `all ${to.duration || 1}s ease-out`;
-    
+
     setTimeout(() => {
       Object.keys(to).forEach(key => {
         if (key !== 'duration' && key !== 'delay') {
@@ -41,12 +42,12 @@ const gsap = {
 };
 
 const donationAmounts = [
-  { amount: 1000, label: '1,000円', description: '1人の子どもの1日分の食事' },
-  { amount: 3000, label: '3,000円', description: '教育用品の購入費用' },
-  { amount: 5000, label: '5,000円', description: '1週間の医療支援' },
-  { amount: 10000, label: '10,000円', description: '1ヶ月の学習支援' },
-  { amount: 30000, label: '30,000円', description: '3ヶ月の生活支援' },
-  { amount: 0, label: 'その他の金額', description: 'ご希望の金額を入力' }
+  { amount: 1000, label: '1,000円', description: '' },
+  { amount: 3000, label: '3,000円', description: '' },
+  { amount: 5000, label: '5,000円', description: '' },
+  { amount: 10000, label: '10,000円', description: '' },
+  { amount: 30000, label: '30,000円', description: '' },
+  { amount: 0, label: 'その他の金額', description: '' }
 ];
 
 const donationMethods = [
@@ -77,34 +78,61 @@ const donationMethods = [
 ];
 
 const impactStats = [
-  { number: '12,450', label: '支援した子どもの数', icon: <Users className="w-8 h-8" /> },
-  { number: '¥85,000,000', label: '累計寄付金額', icon: <DollarSign className="w-8 h-8" /> },
-  { number: '156', label: '支援地域数', icon: <Globe className="w-8 h-8" /> },
-  { number: '98%', label: '直接支援への活用率', icon: <Target className="w-8 h-8" /> }
+  {
+    number: 'ドメイン代・運営費',
+    label: 'サービスを安全に、ずっと続けるため',
+    icon: <DollarSign className="w-8 h-8" />
+  },
+  {
+    number: 'プライバシー重視',
+    label: 'データはサーバに保存せず安心・安全に',
+    icon: <Target className="w-8 h-8" />
+  },
+  {
+    number: '新機能開発',
+    label: '画像・動画添付や文字数制限の緩和など',
+    icon: <Globe className="w-8 h-8" />
+  },
+  {
+    number: '非営利・個人運営',
+    label: '寄付は全てサービス維持・改善に使われます',
+    icon: <Users className="w-8 h-8" />
+  },
 ];
+
+
 
 const testimonials = [
   {
     name: '田中 美咲さん',
-    role: '継続寄付者（2年）',
-    comment: '毎月の小額寄付でも、確実に子どもたちの役に立っていることを実感できます。活動報告書を見るのが楽しみです。',
+    role: '個人寄付者',
+    comment: 'このサービスのおかげで大切な思い出を安心して残せています。心から感謝しています。',
     avatar: '👩‍💼'
   },
   {
-    name: '佐藤 健太郎さん',
-    role: '企業寄付担当者',
-    comment: '透明性の高い活動報告と、効率的な資金活用に感銘を受けました。社員一同で継続支援しています。',
+    name: '佐藤 健一さん',
+    role: '初回寄付者',
+    comment: '非営利で個人運営されていることに共感し、少額ですが応援させていただきました。',
     avatar: '👨‍💼'
   },
   {
-    name: '山田 花子さん',
-    role: '個人寄付者',
-    comment: '自分の寄付がどのように使われているかが明確で、安心して支援を続けられます。',
-    avatar: '👩‍🦳'
+    name: '山本 由美子さん',
+    role: '利用者',
+    comment: '思い出のメッセージをQRコードにできて、家族で何度も見返せるのが嬉しいです。',
+    avatar: '👩‍🎓'
   }
 ];
+type DonationCardContents = {
+  amount: number,
+  label: ReactNode,
+  description: string,
+  isSelected: boolean,
+  onClick: (amount: number) => void,
+  isCustom: boolean
 
-const DonationCard = ({ amount, label, description, isSelected, onClick, isCustom = false }) => {
+}
+
+const DonationCard = ({ amount, label, description, isSelected, onClick, isCustom = false }: DonationCardContents) => {
   const cardRef = useRef(null);
 
   useEffect(() => {
@@ -120,29 +148,42 @@ const DonationCard = ({ amount, label, description, isSelected, onClick, isCusto
     <div
       ref={cardRef}
       onClick={() => onClick(amount)}
-      className={`relative p-6 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
-        isSelected
-          ? 'border-blue-500 bg-blue-50 shadow-lg scale-105'
-          : 'border-gray-200 bg-white hover:border-blue-300 hover:shadow-md'
-      }`}
+      className={`relative p-6 rounded-xl border-2 cursor-pointer transition-all duration-300 ${isSelected
+        ? 'border-blue-500 bg-blue-50 shadow-lg scale-105'
+        : 'border-gray-200 bg-white hover:border-blue-300 hover:shadow-md'
+        }`}
     >
       {isSelected && (
         <div className="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full p-1">
           <CheckCircle className="w-4 h-4" />
         </div>
       )}
-      
+
       <div className="text-center">
         <div className="text-2xl font-bold text-gray-800 mb-2">
-          {isCustom ? <DollarSign className="w-8 h-8 mx-auto text-blue-500" /> : label}
+          {isCustom ? <JapaneseYen className="w-8 h-8 mx-auto text-blue-500" /> : label}
         </div>
         <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
       </div>
     </div>
   );
 };
+interface PaymentMethod {
+  id: string;
+  icon: React.ReactNode;
+  name: string;
+  description: string;
+  fee: string;
+  processing: string;
+}
 
-const PaymentMethodCard = ({ method, isSelected, onClick }) => {
+interface PaymentMethodCardProps {
+  method: PaymentMethod;
+  isSelected: boolean;
+  onClick: (id: string) => void;
+}
+
+const PaymentMethodCard = ({ method, isSelected, onClick }: PaymentMethodCardProps) => {
   const cardRef = useRef(null);
 
   useEffect(() => {
@@ -158,16 +199,14 @@ const PaymentMethodCard = ({ method, isSelected, onClick }) => {
     <div
       ref={cardRef}
       onClick={() => onClick(method.id)}
-      className={`p-6 rounded-xl border-2 cursor-pointer transition-all duration-300 ${
-        isSelected
-          ? 'border-green-500 bg-green-50 shadow-lg'
-          : 'border-gray-200 bg-white hover:border-green-300 hover:shadow-md'
-      }`}
+      className={`p-6 rounded-xl border-2 cursor-pointer transition-all duration-300 ${isSelected
+        ? 'border-green-500 bg-green-50 shadow-lg'
+        : 'border-gray-200 bg-white hover:border-green-300 hover:shadow-md'
+        }`}
     >
       <div className="flex items-start space-x-4">
-        <div className={`p-3 rounded-full ${
-          isSelected ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-600'
-        }`}>
+        <div className={`p-3 rounded-full ${isSelected ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-600'
+          }`}>
           {method.icon}
         </div>
         <div className="flex-1">
@@ -186,22 +225,36 @@ const PaymentMethodCard = ({ method, isSelected, onClick }) => {
   );
 };
 
-const StatCard = ({ stat, index }) => {
-  const cardRef = useRef(null);
+interface IconProps {
+  className?: string;
+  // 他の必要なプロパティがあればここに追加
+}
+
+interface StatCardProps {
+  stat: {
+    icon: ReactElement<IconProps>;
+    number: string | number;
+    label: string;
+  };
+  index: number;
+}
+
+const StatCard = ({ stat, index }: StatCardProps) => {
+  const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (cardRef.current) {
-      gsap.fromTo(cardRef.current,
+      gsap.fromTo(
+        cardRef.current,
         { opacity: 0, scale: 0.8 },
         { opacity: 1, scale: 1, duration: 0.8, delay: index * 0.1 }
       );
     }
   }, [index]);
-
   return (
     <div ref={cardRef} className="text-center p-6 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg">
       <div className="bg-gradient-to-br from-blue-600 to-purple-700 rounded-full p-4 inline-flex mb-4">
-        {React.cloneElement(stat.icon, { className: "text-white w-8 h-8" })}
+        {cloneElement(stat.icon, { className: "text-white w-8 h-8" })}
       </div>
       <div className="text-3xl font-bold text-gray-800 mb-2">{stat.number}</div>
       <div className="text-gray-600">{stat.label}</div>
@@ -209,7 +262,21 @@ const StatCard = ({ stat, index }) => {
   );
 };
 
-const TestimonialCard = ({ testimonial, index }) => {
+
+interface Testimonial {
+  avatar: React.ReactNode;
+  name: string;
+  role: string;
+  comment: string;
+}
+
+interface TestimonialCardProps {
+  testimonial: Testimonial;
+  index: number;
+}
+
+
+const TestimonialCard = ({ testimonial, index }: TestimonialCardProps) => {
   const cardRef = useRef(null);
 
   useEffect(() => {
@@ -240,13 +307,43 @@ const TestimonialCard = ({ testimonial, index }) => {
   );
 };
 
+
+interface DonationAmount {
+  amount: number;
+  label: string | React.ReactNode;
+  description: string;
+}
+
+interface PaymentMethod {
+  id: string;
+  icon: React.ReactNode;
+  name: string;
+  description: string;
+  fee: string;
+  processing: string;
+}
+
+interface Testimonial {
+  avatar: React.ReactNode;
+  name: string;
+  role: string;
+  comment: string;
+}
+
+interface ImpactStat {
+  icon: React.ReactElement;
+  number: string | number;
+  label: string;
+}
+
+
 const DonationPage = () => {
-  const containerRef = useRef(null);
-  const headerRef = useRef(null);
-  const [selectedAmount, setSelectedAmount] = useState(null);
-  const [selectedMethod, setSelectedMethod] = useState(null);
-  const [customAmount, setCustomAmount] = useState('');
-  const [isMonthly, setIsMonthly] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
+  const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
+  const [customAmount, setCustomAmount] = useState<string>('');
+  const [isMonthly, setIsMonthly] = useState<boolean>(false);
 
   useEffect(() => {
     // ヘッダーアニメーション
@@ -254,23 +351,23 @@ const DonationPage = () => {
       const iconEl = headerRef.current.querySelector('.header-icon');
       const titleEl = headerRef.current.querySelector('h1');
       const descEl = headerRef.current.querySelector('p');
-      
+
       if (iconEl) {
-        gsap.fromTo(iconEl, 
-          { scale: 0, opacity: 0 }, 
+        gsap.fromTo(iconEl as HTMLElement,
+          { scale: 0, opacity: 0 },
           { scale: 1, opacity: 1, duration: 0.8, delay: 0.2 }
         );
       }
-      
+
       if (titleEl) {
-        gsap.fromTo(titleEl,
+        gsap.fromTo(titleEl as HTMLElement,
           { y: 30, opacity: 0 },
           { y: 0, opacity: 1, duration: 0.8, delay: 0.4 }
         );
       }
-      
+
       if (descEl) {
-        gsap.fromTo(descEl,
+        gsap.fromTo(descEl as HTMLElement,
           { y: 20, opacity: 0 },
           { y: 0, opacity: 1, duration: 0.6, delay: 0.6 }
         );
@@ -278,14 +375,14 @@ const DonationPage = () => {
     }
   }, []);
 
-  const handleAmountSelect = (amount) => {
+  const handleAmountSelect = (amount: number) => {
     setSelectedAmount(amount);
     if (amount !== 0) {
       setCustomAmount('');
     }
   };
 
-  const handleCustomAmountChange = (e) => {
+  const handleCustomAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCustomAmount(e.target.value);
     setSelectedAmount(0);
   };
@@ -296,7 +393,7 @@ const DonationPage = () => {
       alert('寄付金額と支払い方法を選択してください。');
       return;
     }
-    
+
     alert(`${amount}円の${isMonthly ? '毎月' : ''}寄付手続きを開始します。\n支払い方法: ${donationMethods.find(m => m.id === selectedMethod)?.name}`);
   };
 
@@ -324,8 +421,8 @@ const DonationPage = () => {
             共に未来を築く
           </h1>
           <p className="text-gray-600 text-lg max-w-3xl mx-auto mb-8">
-            あなたの温かい気持ちが、世界中の子どもたちに希望の光を届けます。
-            透明性のある活動で、確実に支援を届けることをお約束いたします。
+            多くの方に安心してご利用いただけるよう、できる限り完全無料でサービスを提供していくことを目指しています。<br />
+            この想いが一人でも多くの方の心に届き、救いとなることを願っています。
           </p>
         </div>
 
@@ -348,17 +445,15 @@ const DonationPage = () => {
             <div className="bg-gray-100 rounded-full p-1 flex">
               <button
                 onClick={() => setIsMonthly(false)}
-                className={`px-6 py-2 rounded-full transition-all ${
-                  !isMonthly ? 'bg-blue-500 text-white shadow-md' : 'text-gray-600'
-                }`}
+                className={`px-6 py-2 rounded-full transition-all ${!isMonthly ? 'bg-blue-500 text-white shadow-md' : 'text-gray-600'
+                  }`}
               >
                 単発寄付
               </button>
               <button
                 onClick={() => setIsMonthly(true)}
-                className={`px-6 py-2 rounded-full transition-all ${
-                  isMonthly ? 'bg-blue-500 text-white shadow-md' : 'text-gray-600'
-                }`}
+                className={`px-6 py-2 rounded-full transition-all ${isMonthly ? 'bg-blue-500 text-white shadow-md' : 'text-gray-600'
+                  }`}
               >
                 継続寄付
               </button>
@@ -383,9 +478,9 @@ const DonationPage = () => {
                 />
               ))}
             </div>
-            
+
             {selectedAmount === 0 && (
-              <div className="mt-4">
+              <div className="mt-4 text-gray-600">
                 <input
                   type="number"
                   placeholder="金額を入力してください"
@@ -446,33 +541,35 @@ const DonationPage = () => {
         <div className="bg-gradient-to-r from-blue-600 to-purple-700 rounded-2xl p-8 text-white shadow-2xl mb-16">
           <div className="text-center mb-8">
             <Shield className="w-12 h-12 mx-auto mb-4" />
-            <h2 className="text-3xl font-bold mb-4">透明性への取り組み</h2>
+            <h2 className="text-3xl font-bold mb-4">寄付金の使用先</h2>
             <p className="text-blue-100 max-w-3xl mx-auto">
               すべての寄付金の使途を明確に報告し、支援者の皆様に信頼していただける
               活動を心がけています。
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
-              <TrendingUp className="w-8 h-8 mx-auto mb-3" />
-              <h3 className="font-semibold mb-2">詳細な活動報告</h3>
+              <Router className="w-8 h-8 mx-auto mb-3" />
+              <h3 className="font-semibold mb-2">
+                ドメイン代・運営費
+              </h3>
               <p className="text-sm text-blue-100">
-                四半期ごとに詳細な活動報告書を公開
+                毎月かかるドメイン費、サーバー代にします。
               </p>
             </div>
             <div className="text-center">
-              <Award className="w-8 h-8 mx-auto mb-3" />
-              <h3 className="font-semibold mb-2">第三者監査</h3>
+              <FolderDot className="w-8 h-8 mx-auto mb-3" />
+              <h3 className="font-semibold mb-2">今後の機能追加</h3>
               <p className="text-sm text-blue-100">
                 独立した監査法人による定期的な監査を実施
               </p>
             </div>
             <div className="text-center">
-              <Zap className="w-8 h-8 mx-auto mb-3" />
-              <h3 className="font-semibold mb-2">リアルタイム報告</h3>
+              <Bird className="w-8 h-8 mx-auto mb-3" />
+              <h3 className="font-semibold mb-2">寄付金</h3>
               <p className="text-sm text-blue-100">
-                支援の様子をリアルタイムで写真・動画で共有
+                遺族支援、東日本大震災などの支援金として使用します。
               </p>
             </div>
           </div>
@@ -486,13 +583,13 @@ const DonationPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
             <div>
               <h4 className="font-semibold text-gray-800 mb-2">電話でのお問い合わせ</h4>
-              <p className="text-gray-600 mb-1">0120-123-456</p>
-              <p className="text-sm text-gray-500">平日 9:00-18:00（土日祝除く）</p>
+              <Link href="tel:0120123456" className="text-gray-600 mb-1 hover:text-blue-400 duration-300">0120-123-456</Link>
+              <p className="text-sm text-gray-500">原則緊急時以外はメールでのお問い合わせをお願いしております</p>
             </div>
             <div>
               <h4 className="font-semibold text-gray-800 mb-2">メールでのお問い合わせ</h4>
-              <p className="text-gray-600 mb-1">donate@example.org</p>
-              <p className="text-sm text-gray-500">24時間受付（48時間以内に返信）</p>
+              <Link href="mailto:otodokelife@gmail.com" className="text-gray-600 mb-1 hover:text-blue-400 duration-300">otodokelife@gmail.com</Link>
+              <p className="text-sm text-gray-500">24時間受付(48時間以内に返信)</p>
             </div>
           </div>
         </div>
