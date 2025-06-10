@@ -37,6 +37,8 @@ const ChevronDown = React.forwardRef<SVGSVGElement, ChevronDownProps>(
     )
 );
 
+ChevronDown.displayName = 'ChevronDown';
+
 interface IconProps {
     className?: string;
 }
@@ -132,13 +134,11 @@ const FAQData = [
 type FAQItemProps = {
     question: string;
     answer: string;
-    index: string;
     isOpen: boolean;
-    onToggle: (index: string) => void;
+    onToggle: () => void;
 };
 
-
-const FAQItem = ({ question, answer, index, isOpen, onToggle }: FAQItemProps) => {
+const FAQItem = ({ question, answer, isOpen, onToggle }: FAQItemProps) => {
     const itemRef = useRef(null);
     const answerRef = useRef(null);
     const iconRef = useRef(null);
@@ -177,7 +177,7 @@ const FAQItem = ({ question, answer, index, isOpen, onToggle }: FAQItemProps) =>
             className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 overflow-hidden"
         >
             <button
-                onClick={() => onToggle(index)}
+                onClick={onToggle}
                 className="w-full p-6 text-left flex items-center justify-between hover:bg-gray-50/50 transition-colors duration-200"
             >
                 <span className="text-gray-800 font-medium text-lg pr-4">{question}</span>
@@ -273,7 +273,6 @@ export default function FAQPage() {
         }));
     };
 
-
     const filteredData = FAQData.map(category => ({
         ...category,
         questions: category.questions.filter(item =>
@@ -285,7 +284,6 @@ export default function FAQPage() {
     return (
         <div
             ref={containerRef}
-
             className="min-h-screen py-20 px-6 mx-3 md:px-10 bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 overflow-hidden relative overflow-hidden"
             style={{
                 backgroundImage: `
@@ -353,9 +351,8 @@ export default function FAQPage() {
                                         key={itemIndex}
                                         question={item.question}
                                         answer={item.answer}
-                                        index={`${categoryIndex}-${itemIndex}`}
                                         isOpen={openItems[`${categoryIndex}-${itemIndex}`]}
-                                        onToggle={(key) => handleToggle(categoryIndex, itemIndex)}
+                                        onToggle={() => handleToggle(categoryIndex, itemIndex)}
                                     />
                                 ))}
                             </div>
@@ -395,7 +392,8 @@ export default function FAQPage() {
                     <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 shadow-lg">
                         <div className="text-3xl font-bold text-rose-600 mb-2">
                             <CountUp end={1000} duration={2} separator="," />+
-                        </div>                        <div className="text-gray-600 text-sm">解決済み質問</div>
+                        </div>
+                        <div className="text-gray-600 text-sm">解決済み質問</div>
                     </div>
                 </div>
             </div>

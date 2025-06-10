@@ -142,7 +142,7 @@ const TableOfContents = ({ sections, activeSection, onSectionClick }: TableOfCon
                 <span>目次</span>
             </h3>
             <nav className="space-y-2">
-                {sections.map((section, index) => (
+                {sections.map((section) => (
                     <button
                         key={section.id}
                         onClick={() => onSectionClick(section.id)}
@@ -165,10 +165,9 @@ const TableOfContents = ({ sections, activeSection, onSectionClick }: TableOfCon
 
 interface TermsSectionProps {
     section: Section;
-    index: number;
 }
 
-const TermsSection = ({ section, index }: TermsSectionProps) => {
+const TermsSection = ({ section }: TermsSectionProps) => {
     const sectionRef = useRef(null);
     const titleRef = useRef(null);
     const contentRef = useRef<(HTMLParagraphElement | null)[]>([]);
@@ -358,11 +357,10 @@ export default function TermsPage() {
 
                     {/* Main Content */}
                     <div className="lg:col-span-3 space-y-8">
-                        {termsData.map((section, index) => (
+                        {termsData.map((section) => (
                             <TermsSection
                                 key={section.id}
                                 section={section}
-                                index={index}
                             />
                         ))}
 

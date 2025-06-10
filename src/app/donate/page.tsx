@@ -1,45 +1,50 @@
 "use client"
-import React, { ReactNode, useEffect, useRef, useState, ReactElement, cloneElement } from 'react';
-import { Heart, Users, Target, Bird, Shield, Gift, CreditCard, Building, FolderDot, CheckCircle, Star, Award, Globe, Zap, DollarSign, Router, JapaneseYen } from 'lucide-react';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
+import { Heart, Users, Target, Bird, Shield, Gift, CreditCard, Building, FolderDot, CheckCircle, Star, Globe, DollarSign, Router, JapaneseYen } from 'lucide-react';
 import Link from 'next/link';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
-// GSAPライブラリの代替実装
-const gsap = {
-  fromTo: (element: HTMLElement, from: Record<string, any>, to: Record<string, any>) => {
-    if (!element || !element.style) return;
+// Register the plugin
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
-    // 初期状態を設定
-    Object.keys(from).forEach(key => {
-      if (key === 'y') {
-        element.style.transform = `translateY(${from[key]}px)`;
-      } else if (key === 'opacity') {
-        element.style.opacity = from[key];
-      } else if (key === 'scale') {
-        element.style.transform = `scale(${from[key]})`;
-      } else if (key === 'x') {
-        element.style.transform = `translateX(${from[key]}px)`;
-      }
-    });
+interface StatCardProps {
+    stat: {
+        icon: React.ReactElement;
+        number: string;
+        label: string;
+    };
+    index: number;
+}
 
-    element.style.transition = `all ${to.duration || 1}s ease-out`;
+interface Testimonial {
+    avatar: string;
+    name: string;
+    role: string;
+    comment: string;
+}
 
-    setTimeout(() => {
-      Object.keys(to).forEach(key => {
-        if (key !== 'duration' && key !== 'delay') {
-          if (key === 'y') {
-            element.style.transform = `translateY(${to[key]}px)`;
-          } else if (key === 'opacity') {
-            element.style.opacity = to[key];
-          } else if (key === 'scale') {
-            element.style.transform = `scale(${to[key]})`;
-          } else if (key === 'x') {
-            element.style.transform = `translateX(${to[key]}px)`;
-          }
-        }
-      });
-    }, (to.delay || 0) * 1000);
-  }
-};
+interface TestimonialCardProps {
+    testimonial: Testimonial;
+    index: number;
+}
+
+interface PaymentMethod {
+    id: string;
+    icon: React.ReactNode;
+    name: string;
+    description: string;
+    fee: string;
+    processing: string;
+}
+
+interface PaymentMethodCardProps {
+    method: PaymentMethod;
+    isSelected: boolean;
+    onClick: (id: string) => void;
+}
 
 const donationAmounts = [
   { amount: 1000, label: '1,000円', description: '' },
@@ -81,26 +86,24 @@ const impactStats = [
   {
     number: 'ドメイン代・運営費',
     label: 'サービスを安全に、ずっと続けるため',
-    icon: <DollarSign className="w-8 h-8" />
+    icon: <DollarSign className="text-white w-8 h-8" />
   },
   {
     number: 'プライバシー重視',
     label: 'データはサーバに保存せず安心・安全に',
-    icon: <Target className="w-8 h-8" />
+    icon: <Target className="text-white w-8 h-8" />
   },
   {
     number: '新機能開発',
     label: '画像・動画添付や文字数制限の緩和など',
-    icon: <Globe className="w-8 h-8" />
+    icon: <Globe className="text-white w-8 h-8" />
   },
   {
     number: '非営利・個人運営',
     label: '寄付は全てサービス維持・改善に使われます',
-    icon: <Users className="w-8 h-8" />
+    icon: <Users className="text-white w-8 h-8" />
   },
 ];
-
-
 
 const testimonials = [
   {
@@ -122,6 +125,7 @@ const testimonials = [
     avatar: '👩‍🎓'
   }
 ];
+
 type DonationCardContents = {
   amount: number,
   label: ReactNode,
@@ -129,7 +133,6 @@ type DonationCardContents = {
   isSelected: boolean,
   onClick: (amount: number) => void,
   isCustom: boolean
-
 }
 
 const DonationCard = ({ amount, label, description, isSelected, onClick, isCustom = false }: DonationCardContents) => {
@@ -168,20 +171,6 @@ const DonationCard = ({ amount, label, description, isSelected, onClick, isCusto
     </div>
   );
 };
-interface PaymentMethod {
-  id: string;
-  icon: React.ReactNode;
-  name: string;
-  description: string;
-  fee: string;
-  processing: string;
-}
-
-interface PaymentMethodCardProps {
-  method: PaymentMethod;
-  isSelected: boolean;
-  onClick: (id: string) => void;
-}
 
 const PaymentMethodCard = ({ method, isSelected, onClick }: PaymentMethodCardProps) => {
   const cardRef = useRef(null);
@@ -225,20 +214,6 @@ const PaymentMethodCard = ({ method, isSelected, onClick }: PaymentMethodCardPro
   );
 };
 
-interface IconProps {
-  className?: string;
-  // 他の必要なプロパティがあればここに追加
-}
-
-interface StatCardProps {
-  stat: {
-    icon: ReactElement<IconProps>;
-    number: string | number;
-    label: string;
-  };
-  index: number;
-}
-
 const StatCard = ({ stat, index }: StatCardProps) => {
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -254,27 +229,13 @@ const StatCard = ({ stat, index }: StatCardProps) => {
   return (
     <div ref={cardRef} className="text-center p-6 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg">
       <div className="bg-gradient-to-br from-blue-600 to-purple-700 rounded-full p-4 inline-flex mb-4">
-        {cloneElement(stat.icon, { className: "text-white w-8 h-8" })}
+        {stat.icon}
       </div>
       <div className="text-3xl font-bold text-gray-800 mb-2">{stat.number}</div>
       <div className="text-gray-600">{stat.label}</div>
     </div>
   );
 };
-
-
-interface Testimonial {
-  avatar: React.ReactNode;
-  name: string;
-  role: string;
-  comment: string;
-}
-
-interface TestimonialCardProps {
-  testimonial: Testimonial;
-  index: number;
-}
-
 
 const TestimonialCard = ({ testimonial, index }: TestimonialCardProps) => {
   const cardRef = useRef(null);
@@ -306,36 +267,6 @@ const TestimonialCard = ({ testimonial, index }: TestimonialCardProps) => {
     </div>
   );
 };
-
-
-interface DonationAmount {
-  amount: number;
-  label: string | React.ReactNode;
-  description: string;
-}
-
-interface PaymentMethod {
-  id: string;
-  icon: React.ReactNode;
-  name: string;
-  description: string;
-  fee: string;
-  processing: string;
-}
-
-interface Testimonial {
-  avatar: React.ReactNode;
-  name: string;
-  role: string;
-  comment: string;
-}
-
-interface ImpactStat {
-  icon: React.ReactElement;
-  number: string | number;
-  label: string;
-}
-
 
 const DonationPage = () => {
   const containerRef = useRef<HTMLDivElement>(null);

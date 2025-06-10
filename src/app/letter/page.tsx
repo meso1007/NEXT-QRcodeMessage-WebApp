@@ -100,20 +100,20 @@ const LetterPage = () => {
             }
         }
     };
-const sparkleVariants = {
-  hidden: { scale: 0, opacity: 0 },
-  visible: {
-    scale: 1,
-    opacity: 1,
-    transition: {
-      duration: 3,       // ゆっくりした8秒間
-      repeat: Infinity,
-      repeatType: "reverse",
-      ease: "easeInOut"  // 柔らかいイージング
-    }
-  }
-};
 
+    const sparkleVariants = {
+        hidden: { scale: 0, opacity: 0 },
+        visible: {
+            scale: 1,
+            opacity: 1,
+            transition: {
+                duration: 3,
+                repeat: Infinity,
+                repeatType: "reverse",
+                ease: "easeInOut"
+            }
+        }
+    };
 
     if (isLoading) {
         return (
@@ -305,7 +305,6 @@ const sparkleVariants = {
                                         <div className="flex items-center space-x-2 text-gray-600">
                                             <span className="text-sm italic">いつまでも心の中に</span>
                                         </div>
-
                                     </motion.div>
                                 </motion.div>
                             )}

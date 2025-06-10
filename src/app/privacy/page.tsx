@@ -1,6 +1,6 @@
 "use client"
 
-import React, { FC, ReactElement, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { Shield, Calendar, CheckCircle, Eye, Lock, Database, FileText, Globe, Mail, Phone, MapPin, Clock } from 'lucide-react';
 
 // GSAPライブラリの代替実装
@@ -22,7 +22,7 @@ type Section = {
   id: string;
   title: string;
   content?: string;
-  icon: ReactElement<any>;
+  icon: React.ReactElement<{ className?: string }>;
   subsections?: Subsection[];
 };
 
@@ -300,7 +300,7 @@ const PrivacySection: FC<PrivacySectionProps> = ({ section, index }) => {
           {React.cloneElement(section.icon, {
             className: "text-white w-5 h-5",
           })}
-        </div>
+        </div>  
         <h2 className="text-2xl font-bold text-gray-800">{section.title}</h2>
       </div>
 

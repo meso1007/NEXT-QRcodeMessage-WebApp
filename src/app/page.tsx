@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Heart, QrCode, Shield, Download, Copy, Check, Sparkles, Lock, Clock, Users } from 'lucide-react';
 import CountUp from 'react-countup';
+import Image from 'next/image';
 
 export default function HomePage() {
   const [message, setMessage] = useState('');
@@ -203,7 +204,7 @@ export default function HomePage() {
               <h3 className="text-2xl font-bold text-gray-700 mb-6">✨ QRコードが生成されました ✨</h3>
 
               <div className="inline-block bg-gradient-to-br from-pink-50 to-purple-50 p-8 rounded-2xl mb-6 border border-pink-100 shadow-inner">
-                <img
+                <Image
                   src={qrCodeUrl}
                   alt="Generated QR Code"
                   className="mx-auto animate-scale-in"
