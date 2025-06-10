@@ -1,99 +1,139 @@
-# おくる想い
+# OTODOKE LIFE - Message for the Future
 
-## 概要
-「おくる想い」は、大切な人へメッセージを届けるためのプラットフォームです。記念日や日常の感謝など、さまざまな場面でも活用でき、あなたの気持ちを安心してカタチにして残すことができます。
+## Overview
+OtoDoke is a platform designed to help you preserve and share your heartfelt messages with loved ones. Whether it's for special occasions, daily gratitude, or future communications, our service provides a secure and elegant way to keep your thoughts and feelings alive.
 
-## ページ紹介
+## Features
 
-### ホームページ（/）
-- メッセージ作成フォームとQRコード生成
-- サービスの概要説明
-- 直感的なUIで誰でも簡単に利用可能
+### Home Page (/)
+- Intuitive message creation form
+- QR code generation
+- Service overview
+- User-friendly interface for seamless experience
 
-![ホームページ](./screenshots/home.png)
-
----
-
-### レター表示ページ（/letter）
-- QRコードからアクセスしたメッセージの閲覧
-- アニメーション付きでメッセージが表示される
-- 送信者名・日付も表示
-
-![レター表示ページ](./screenshots/letter.png)
+![Home Page](./public/readme/topPage.png)
+![QR Code Generation](./public/readme/topPage2.png)
 
 ---
 
-### 利用規約ページ（/terms）
-- サービス利用規約の詳細表示
-- 目次ナビゲーションで各セクションにジャンプ可能
+### Letter View Page (/letter)
+- Access messages via QR code
+- Animated message display
+- Sender information and timestamp
+- Elegant presentation
 
-![利用規約ページ](./screenshots/terms.png)
-
----
-
-### プライバシーポリシーページ（/privacy）
-- 個人情報の取り扱い方針を明記
-- お問い合わせ先情報も掲載
-
-![プライバシーポリシーページ](./screenshots/privacy.png)
+![Letter View Page](./public/readme/letterPage.png)
 
 ---
 
-### FAQページ（/faq）
-- よくある質問と回答をカテゴリごとに掲載
-- 検索機能付きで疑問をすぐに解決
+### Terms of Service (/terms)
+- Comprehensive service terms
+- Interactive table of contents
+- Easy navigation between sections
 
-![FAQページ](./screenshots/faq.png)
-
----
-
-### 寄付ページ（/donate）
-- サービス支援のための寄付案内
-- 寄付方法や支援者への感謝メッセージ
-
-![寄付ページ](./screenshots/donate.png)
+![Terms of Service Page](./public/readme/termsPage.png)
 
 ---
 
-### Aboutページ（/about）
-- サービス開発者の紹介
-- サービスの想い・背景
-- SNSリンク
+### Privacy Policy (/privacy)
+- Detailed privacy guidelines
+- Data handling policies
+- Contact information
+- User rights and responsibilities
 
-![Aboutページ](./screenshots/about.png)
+![Privacy Policy Page](./public/readme/privacyPage.png)
 
 ---
 
-## 機能
-- メッセージの作成とQRコード化
-- プライバシーポリシーと利用規約の表示
-- よくある質問（FAQ）セクション
-- お問い合わせフォーム
+### FAQ Section (/faq)
+- Categorized common questions
+- Search functionality
+- Comprehensive answers
+- Regular updates
 
-## 技術スタック
-- **フロントエンド**: React, Next.js, TypeScript
-- **スタイリング**: Tailwind CSS
-- **アニメーション**: GSAP, Framer Motion
-- **アイコン**: Lucide React
+![FAQ Page](./public/readme/faqPage.png)
 
-## セットアップ手順
-1. リポジトリをクローン
+---
+
+### Donation Page (/donate)
+- Support options
+- Donation methods
+- Recognition for contributors
+- Impact transparency
+
+![Donation Page](./public/readme/donatePage.png)
+
+---
+
+### About Page (/about)
+- Developer introduction
+- Service mission and vision
+- Social media links
+- Project background
+
+![About Page](./public/readme/aboutPage.png)
+
+---
+
+## Technical Features
+- Message creation and QR code generation
+- Privacy policy and terms of service integration
+- Comprehensive FAQ system
+- Contact form functionality
+- Responsive design
+- Cross-browser compatibility
+
+## Tech Stack
+- **Frontend**: React 18, Next.js 14, TypeScript
+- **Styling**: Tailwind CSS
+- **Animations**: GSAP, Framer Motion
+- **Icons**: Lucide React
+- **State Management**: React Hooks
+- **Build Tool**: Vite
+
+## Getting Started
+
+### Prerequisites
+- Node.js 18.0.0 or higher
+- npm 9.0.0 or higher
+
+### Installation
+1. Clone the repository
    ```bash
    git clone https://github.com/yourusername/otodoke.git
    cd otodoke
    ```
 
-2. 依存関係のインストール
+2. Install dependencies
    ```bash
    npm install
    ```
 
-3. 開発サーバーの起動
+3. Start the development server
    ```bash
    npm run dev
    ```
 
-4. ブラウザで `http://localhost:3000` にアクセス
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-## ライセンス
-MIT
+### Building for Production
+```bash
+npm run build
+npm start
+```
+
+## Contributing
+We welcome contributions! Please read our [Contributing Guidelines](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+- Special thanks to all contributors and supporters
+- Inspired by the need for meaningful digital communication
+- Built with ❤️ for a better future
+
+## Contact
+- Email: otodokelife@gmail.com
+- Website: [http://99.79.63.2/](http://99.79.63.2/)
+- GitHub: [@meso1007](https://github.com/meso1007)
