@@ -3,6 +3,60 @@
 ## Overview
 OtoDoke is a platform designed to help you preserve and share your heartfelt messages with loved ones. Whether it's for special occasions, daily gratitude, or future communications, our service provides a secure and elegant way to keep your thoughts and feelings alive.
 
+## 🛠 Technology Stack
+
+### Frontend
+| Technology | Version | Selection Reason |
+|------------|---------|-----------------|
+| Next.js | 14.0.0 | Optimal for SEO with server-side rendering and static generation. Leverages the latest App Router features |
+| React | 18.2.0 | Component-based development with efficient virtual DOM rendering. Large community and rich ecosystem |
+| TypeScript | 5.3.0 | Enhanced development efficiency through type safety and early bug detection. Improved code readability and maintainability |
+| Tailwind CSS | 3.4.0 | Rapid UI development with utility-first approach. High customizability and performance optimization |
+| Framer Motion | 10.16.0 | Smooth animations and interactions. Excellent React integration with declarative animation syntax |
+| GSAP | 3.12.0 | Advanced animation control and performance optimization. Ideal for complex animation sequences |
+
+### Backend & Infrastructure
+| Technology | Version | Selection Reason |
+|------------|---------|-----------------|
+| Node.js | 18.17.0 | Stable LTS version. High performance through asynchronous processing and event-driven architecture |
+| Vercel | Latest | Excellent Next.js integration with global CDN. Automated deployments and scalability |
+
+
+### Development Tools
+| Technology | Version | Selection Reason |
+|------------|---------|-----------------|
+| ESLint | 8.56.0 | Maintains code quality and enforces consistent coding style |
+| Prettier | 3.1.0 | Ensures consistent code formatting across the project |
+| Jest | 29.7.0 | Unit and snapshot testing. Optimal for React component testing |
+| GitHub Actions | - | Automated CI/CD pipeline. Maintains code quality and efficient deployment |
+
+### Performance & Analytics
+| Technology | Version | Selection Reason |
+|------------|---------|-----------------|
+| Google Analytics | 4 | User behavior analysis and performance measurement. Comprehensive free analytics tool |
+
+
+### Key Technical Decisions
+1. **Performance Focus**
+   - Fast initial load times
+   - Smooth animations
+   - Optimized bundle size
+
+2. **Development Efficiency**
+   - Type safety for early bug detection
+   - Rich developer tools
+   - Active community support
+
+3. **Scalability**
+   - Serverless architecture
+   - Global CDN
+   - Auto-scaling capabilities
+
+4. **Security**
+   - Latest security practices
+   - Regular updates
+   - Robust authentication system
+
 ## Features
 
 ### Home Page (/)
@@ -83,14 +137,6 @@ OtoDoke is a platform designed to help you preserve and share your heartfelt mes
 - Responsive design
 - Cross-browser compatibility
 
-## Tech Stack
-- **Frontend**: React 18, Next.js 14, TypeScript
-- **Styling**: Tailwind CSS
-- **Animations**: GSAP, Framer Motion
-- **Icons**: Lucide React
-- **State Management**: React Hooks
-- **Build Tool**: Vite
-
 ## Getting Started
 
 ### Prerequisites
@@ -100,7 +146,7 @@ OtoDoke is a platform designed to help you preserve and share your heartfelt mes
 ### Installation
 1. Clone the repository
    ```bash
-   git clone https://github.com/yourusername/otodoke.git
+   git clone https://github.com/meso1007/NEXT-QRcodeMessage-WebApp
    cd otodoke
    ```
 
@@ -134,6 +180,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Built with ❤️ for a better future
 
 ## Contact
-- Email: otodokelife@gmail.com
+- Email: diegoshoya2017@gmail.com
 - Website: [http://99.79.63.2/](http://99.79.63.2/)
 - GitHub: [@meso1007](https://github.com/meso1007)
