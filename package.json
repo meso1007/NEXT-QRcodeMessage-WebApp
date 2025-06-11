@@ -3,11 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "generate-sitemap": "ts-node scripts/generate-sitemap.ts",
+    "dev": "next dev",
     "build": "npm run generate-sitemap && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate-sitemap": "ts-node scripts/generate-sitemap.ts"
   },
   "dependencies": {
     "framer-motion": "^12.16.0",
