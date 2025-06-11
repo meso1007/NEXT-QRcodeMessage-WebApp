@@ -1,8 +1,9 @@
 "use client"
 
 import React, { useState, useEffect } from 'react';
-import { Heart, Menu, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 
 // Header コンポーネント
 export default function Header() {
@@ -28,7 +29,7 @@ export default function Header() {
         <div className="flex items-center justify-between py-4">
           {/* ロゴ部分 */}
           <div className="flex items-center gap-3">
-            <Heart className="w-8 h-8 text-rose-400" />
+            <Image src="/logo/app-logo.png" alt="OTODOKE LIFE" width={70} height={70} />
             <div>
               <h1 className="text-2xl font-bold text-gray-700">OTODOKE LIFE</h1>
               <p className="text-sm text-gray-500 hidden sm:block">大切な人への想いを、永遠に残す</p>
