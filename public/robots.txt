@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://99.79.63.2/sitemap.xml 
+Sitemap: https://otodokelife.com/sitemap.xml 

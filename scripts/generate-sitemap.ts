@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const BASE_URL = 'https://99.79.63.2';
+const BASE_URL = 'https://otodokelife.com';
 
 const pages = [
   '',
