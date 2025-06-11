@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+const fs = require('fs');
+const path = require('path');
 
 const BASE_URL = 'https://otodokelife.com';
 
@@ -26,4 +26,4 @@ const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 </urlset>`;
 
 fs.writeFileSync(path.join(process.cwd(), 'public', 'sitemap.xml'), sitemap);
-console.log('sitemap.xml generated!');
+console.log('sitemap.xml generated!'); 

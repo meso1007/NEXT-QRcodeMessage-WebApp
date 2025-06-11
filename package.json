@@ -4,10 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run generate-sitemap && next build",
+    "build": "node scripts/generate-sitemap.js && next build",
     "start": "next start",
-    "lint": "next lint",
-    "generate-sitemap": "ts-node scripts/generate-sitemap.ts"
+    "lint": "next lint"
   },
   "dependencies": {
     "framer-motion": "^12.16.0",
