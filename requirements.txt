@@ -1,0 +1,30 @@
+# Core Dependencies
+next==15.3.3
+react==19.0.0
+react-dom==19.0.0
+
+# Animation and UI
+framer-motion==12.16.0
+gsap==3.13.0
+lucide-react==0.513.0
+react-countup==6.5.3
+react-icons==5.5.0
+
+# Development Dependencies
+@eslint/eslintrc==3
+@tailwindcss/postcss==4
+@types/node==20.19.0
+@types/react==19
+@types/react-dom==19
+eslint==9
+eslint-config-next==15.3.3
+tailwindcss==4
+ts-node==10.9.2
+typescript==5
+
+# Node.js Version
+node>=18.17.0
+
+# Environment Variables
+NODE_ENV=production
+NEXT_PUBLIC_SITE_URL=https://otodokelife.com 
