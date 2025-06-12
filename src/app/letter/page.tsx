@@ -101,19 +101,19 @@ const LetterPage = () => {
         }
     };
 
-    const sparkleVariants = {
-        hidden: { scale: 0, opacity: 0 },
-        visible: {
-            scale: 1,
-            opacity: 1,
-            transition: {
+const sparkleVariants = {
+  hidden: { scale: 0, opacity: 0 },
+  visible: {
+    scale: 1,
+    opacity: 1,
+    transition: {
                 duration: 3,
-                repeat: Infinity,
-                repeatType: "reverse",
+      repeat: Infinity,
+      repeatType: "reverse",
                 ease: "easeInOut"
-            }
-        }
-    };
+    }
+  }
+};
 
     if (isLoading) {
         return (

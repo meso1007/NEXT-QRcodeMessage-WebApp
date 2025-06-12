@@ -251,13 +251,13 @@ export default function FAQPage() {
 
             // Floating animation for the title icon
             if (titleRef.current) {
-                gsap.to(titleRef.current.querySelector('svg'), {
-                    y: -10,
-                    duration: 2,
-                    ease: "power1.inOut",
-                    yoyo: true,
-                    repeat: -1,
-                });
+            gsap.to(titleRef.current.querySelector('svg'), {
+                y: -10,
+                duration: 2,
+                ease: "power1.inOut",
+                yoyo: true,
+                repeat: -1,
+            });
             }
 
         }, containerRef);

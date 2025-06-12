@@ -148,9 +148,9 @@ const TableOfContents = ({ sections, activeSection, onSectionClick }: TableOfCon
                         onClick={() => onSectionClick(section.id)}
                         className={`w-full text-left px-3 py-2 rounded-lg transition-all duration-300 flex items-center space-x-2 ${
                             activeSection === section.id
-                                ? 'bg-blue-100 text-blue-700 font-medium'
-                                : 'text-gray-600 hover:bg-gray-50'
-                        }`}
+                            ? 'bg-blue-100 text-blue-700 font-medium'
+                            : 'text-gray-600 hover:bg-gray-50'
+                            }`}
                     >
                         <span className="text-blue-500">{section.icon}</span>
                         <span className="text-sm">{section.title}</span>
@@ -264,13 +264,13 @@ export default function TermsPage() {
 
             // Floating animation for header icon
             if (headerRef.current) {
-                gsap.to(headerRef.current.querySelector('.header-icon'), {
-                    y: -10,
-                    duration: 3,
-                    ease: "power1.inOut",
-                    yoyo: true,
-                    repeat: -1,
-                });
+            gsap.to(headerRef.current.querySelector('.header-icon'), {
+                y: -10,
+                duration: 3,
+                ease: "power1.inOut",
+                yoyo: true,
+                repeat: -1,
+            });
             }
 
             // Section observation for active section
