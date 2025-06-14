@@ -252,14 +252,14 @@ export default function HomePage() {
             <div className="text-center bg-white/40 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/60 transition-all duration-300 transform hover:scale-105">
               <Users className="w-12 h-12 text-rose-400 mx-auto mb-4" />
               <div className="text-3xl font-bold text-gray-700 mb-2">
-                <CountUp end={1000} duration={2} separator="," />+
+                <CountUp end={400} duration={6} separator="," suffix="+" />
               </div>
               <div className="text-gray-500">作成されたメッセージ</div>
             </div>
             <div className="text-center bg-white/40 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/60 transition-all duration-300 transform hover:scale-105">
               <Heart className="w-12 h-12 text-purple-400 mx-auto mb-4" />
               <div className="text-3xl font-bold text-gray-700 mb-2">
-                <CountUp end={100} duration={2} />%
+                <CountUp end={100} duration={6} />%
               </div>
               <div className="text-gray-500">プライバシー保護</div>
             </div>
