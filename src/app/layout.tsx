@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Script from 'next/script';
+import { GA_TRACKING_ID } from '@/lib/analytics';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,6 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://otodokelife.com/'),
   title: "OTODOKE LIFE - 大切な人への想いを残す場所",
   description: "大切な人への想いやメッセージを、安全で意味のある形で残すためのプラットフォームです。QRコードを通じて、あなたの想いを未来へ届けます。",
   keywords: "メッセージ, QRコード, 想い, メモリー, デジタルレター, 大切な人へのメッセージ",
@@ -74,6 +77,25 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ja">
+      <head>
+        {/* Google Analytics */}
+        <Script
+          strategy="afterInteractive"
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+        />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${GA_TRACKING_ID}');
+            `,
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50`}
       >

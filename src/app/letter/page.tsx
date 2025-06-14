@@ -3,11 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { Heart, Star, Sparkles, Drum } from 'lucide-react';
+import { trackQRCodeScan } from '@/lib/analytics';
 
 interface MessageData {
     message: string;
     name: string;
     created: string;
+    id: string;
 }
 
 const LetterPage = () => {
@@ -38,6 +40,10 @@ const LetterPage = () => {
                 console.log('JSON parsed:', jsonData);
 
                 setMessageData(jsonData);
+
+                // QRコードスキャンをトラッキング
+                trackQRCodeScan(jsonData.id || 'unknown');
+                console.log('QRコードがスキャンされました。ID:', jsonData.id || 'unknown');
 
                 // ローディング演出
                 setTimeout(() => {
@@ -158,7 +164,8 @@ const sparkleVariants = {
                             setMessageData({
                                 message: "テストメッセージです。この画面が表示されれば、アニメーション機能は正常に動作しています。",
                                 name: "テストユーザー",
-                                created: "2025-06-10"
+                                created: "2025-06-10",
+                                id: "test-id"
                             });
                             setError(null);
                             setIsLoading(true);

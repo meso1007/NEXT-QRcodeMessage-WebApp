@@ -29,7 +29,13 @@ export default function Header() {
         <div className="flex items-center justify-between py-4">
           {/* ロゴ部分 */}
           <div className="flex items-center gap-3">
-            <Image src="/logo/app-logo.png" alt="OTODOKE LIFE" width={70} height={70} />
+            <Image 
+              src="/logo/app-logo.png" 
+              alt="OTODOKE LIFE" 
+              width={70} 
+              height={70} 
+              priority 
+            />
             <div>
               <h1 className="text-2xl font-bold text-gray-700">OTODOKE LIFE</h1>
               <p className="text-sm text-gray-500 hidden sm:block">大切な人への想いを、永遠に残す</p>
