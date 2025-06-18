@@ -160,26 +160,6 @@ const LetterPage = () => {
         }, 1500);
     };
 
-    // メッセージを文字ごとに分割（改行を適切に処理）
-    const processMessage = (message: string) => {
-        const result: Array<{ char: string; isNewline: boolean; index: number }> = [];
-        let globalIndex = 0;
-        
-        for (let i = 0; i < message.length; i++) {
-            if (message[i] === '\n') {
-                result.push({ char: '\n', isNewline: true, index: globalIndex });
-                globalIndex++;
-            } else {
-                result.push({ char: message[i], isNewline: false, index: globalIndex });
-                globalIndex++;
-            }
-        }
-        
-        return result;
-    };
-
-    const processedWords = messageData?.message ? processMessage(messageData.message) : [];
-
     useEffect(() => {
         if (showMessage && messageData?.message) {
             const interval = setInterval(() => {
