@@ -1,18 +1,15 @@
 # Base image
-FROM node:18.17.0-alpine
+FROM node:20-alpine
 
 # Set working directory
 WORKDIR /app
 
 # Install dependencies
-COPY package.json package-lock.json ./
-RUN npm ci
+COPY package*.json ./
+RUN npm install
 
 # Copy project files
 COPY . .
-
-# Generate sitemap
-RUN node scripts/generate-sitemap.js
 
 # Build application
 RUN npm run build

@@ -4,10 +4,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Heart, QrCode, Shield, Download, Copy, Check, Sparkles, Lock, Clock, Users } from 'lucide-react';
 import CountUp from 'react-countup';
 import Image from 'next/image';
+import Modal, { ConfirmModal, ModalButton } from '@/components/Modal';
 
 export default function HomePage() {
   const [message, setMessage] = useState('');
   const [name, setName] = useState('');
+  const [writerName, setWriterName] = useState('');
   const [qrCodeUrl, setQrCodeUrl] = useState('');
   const [showQR, setShowQR] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -18,6 +20,16 @@ export default function HomePage() {
     stats: false,
     features: false,
   });
+
+  // Modal states
+  const [showMessageRequiredModal, setShowMessageRequiredModal] = useState(false);
+  const [showMessageTooLongModal, setShowMessageTooLongModal] = useState(false);
+  const [showQRFailureModal, setShowQRFailureModal] = useState(false);
+  const [showURLCopyModal, setShowURLCopyModal] = useState(false);
+  const [showURLCopyConfirmModal, setShowURLCopyConfirmModal] = useState(false);
+  const [showURLCopyPromptModal, setShowURLCopyPromptModal] = useState(false);
+  const [directUrl, setDirectUrl] = useState('');
+
   type VisibleSections = {
     hero: boolean;
     about?: boolean;
@@ -70,36 +82,190 @@ export default function HomePage() {
     return () => clearInterval(timer);
   }, []);
 
-  const generateQRCode = () => {
+  // 2. Base64エンコードの最適化版
+  const optimizedEncode = (data: { [key: string]: string | number }) => {
+    // 日本語文字の効率的なエンコード
+    const compressed = JSON.stringify(data)
+      .replace(/["{}]/g, '') // 不要な文字を削除
+      .replace(/,/g, '|')    // カンマをパイプに置換（短縮）
+      .replace(/:/g, '~');   // コロンをチルダに置換（短縮）
+    
+    return btoa(encodeURIComponent(compressed))
+      .replace(/\+/g, '-')   // URL安全文字に変換
+      .replace(/\//g, '_')   // URL安全文字に変換
+      .replace(/=/g, '');    // パディングを削除
+  };
+
+  // 4. 最適化されたQRコード生成関数
+  const generateOptimizedQRCode = async () => {
     if (!message.trim()) {
-      alert('メッセージを入力してください');
+      setShowMessageRequiredModal(true);
       return;
     }
 
-    const messageData = {
-      message: message.trim(),
-      name: name.trim() || '匿名',
-      created: new Date().toISOString().split('T')[0]
+    // 文字数制限を大幅に緩和（最大1000文字まで対応）
+    if (message.length > 1000) {
+      setShowMessageTooLongModal(true);
+      return;
+    }
+
+    // 超コンパクトなデータ構造
+    const compactData = {
+      m: message.trim(),
+      n: name.trim() || '',
+      w: writerName.trim() || '',
+      t: Date.now() // タイムスタンプを数値で保存（より短い）
     };
 
-    const encodedData = btoa(encodeURIComponent(JSON.stringify(messageData)));
-    const letterUrl = `${window.location.origin}/letter#data=${encodedData}`;
+    // 最適化エンコード
+    const encodedData = optimizedEncode(compactData);
+    const letterUrl = `${window.location.origin}/letter#${encodedData}`;
 
-    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(letterUrl)}`;
+    console.log('Original message length:', message.length);
+    console.log('Encoded data length:', encodedData.length);
+    console.log('Final URL length:', letterUrl.length);
 
-    setQrCodeUrl(qrUrl);
-    setShowQR(true);
+    // QRコード生成設定（高密度対応）
+    const qrConfig = {
+      size: '400x400',        // サイズを大きく
+      ecc: 'L',              // エラー訂正レベルを最低に（容量優先）
+      format: 'png',
+      margin: '0',           // マージンを最小に
+      qzone: '0'            // クワイエットゾーンを最小に
+    };
+
+    // 複数のQRサービス（容量制限が異なる）
+    const qrServices = [
+      // 1. QR Server（標準）
+      {
+        name: 'QR Server',
+        url: `https://api.qrserver.com/v1/create-qr-code/?size=${qrConfig.size}&data=${encodeURIComponent(letterUrl)}&format=${qrConfig.format}&ecc=${qrConfig.ecc}&margin=${qrConfig.margin}`,
+        maxLength: 2000
+      },
+      
+      // 2. QRicKit（より大容量対応）
+      {
+        name: 'QRicKit',
+        url: `https://qrickit.com/api/qr?d=${encodeURIComponent(letterUrl)}&s=20&border=1&download=0`,
+        maxLength: 4000
+      },
+      
+      // 3. QR-Code-Generator（高容量）
+      {
+        name: 'QR Code Generator',
+        url: `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(letterUrl)}&format=png&ecc=L&margin=1`,
+        maxLength: 3000
+      }
+    ];
+
+    // URLの長さに応じて適切なサービスを選択
+    const selectedService = qrServices.find(service => letterUrl.length <= service.maxLength) || qrServices[1];
+
+    console.log(`Using ${selectedService.name} for URL length: ${letterUrl.length}`);
+
+    // QRコード生成とテスト
+    try {
+      const testResponse = await fetch(selectedService.url, { method: 'HEAD' });
+      
+      if (testResponse.ok) {
+        setQrCodeUrl(selectedService.url);
+        setShowQR(true);
+        console.log(`QR code generated successfully with ${selectedService.name}`);
+      } else {
+        throw new Error(`HTTP ${testResponse.status}`);
+      }
+    } catch (error) {
+      console.log(`Primary service failed:`, error);
+      
+      // フォールバック: 次のサービスを試す
+      for (let i = 1; i < qrServices.length; i++) {
+        try {
+          const fallbackUrl = qrServices[i].url;
+          const testImg = new window.Image();
+          
+          await new Promise((resolve, reject) => {
+            testImg.onload = resolve;
+            testImg.onerror = reject;
+            testImg.src = fallbackUrl;
+          });
+          
+          setQrCodeUrl(fallbackUrl);
+          setShowQR(true);
+          console.log(`Fallback successful with ${qrServices[i].name}`);
+          return;
+          
+        } catch (fallbackError) {
+          console.log(`Fallback ${qrServices[i].name} failed:`, fallbackError);
+          continue;
+        }
+      }
+      
+      // 全て失敗した場合の最終手段
+      handleQRGenerationFailure();
+    }
+  };
+
+  // 5. QRコード生成失敗時の処理
+  const handleQRGenerationFailure = () => {
+    setShowQRFailureModal(true);
+    
+    // URLを直接コピーできるオプションを提供
+    const messageData = {
+      m: message.trim(),
+      n: name.trim() || '',
+      w: writerName.trim() || '',
+      t: Date.now()
+    };
+    
+    const encodedData = optimizedEncode(messageData);
+    const directUrlValue = `${window.location.origin}/letter#${encodedData}`;
+    setDirectUrl(directUrlValue);
+  };
+
+  const handleURLCopyConfirm = () => {
+    navigator.clipboard.writeText(directUrl).then(() => {
+      setShowURLCopyModal(true);
+    }).catch(() => {
+      setShowURLCopyPromptModal(true);
+    });
+  };
+
+  // 6. 文字数リアルタイム表示の改善
+  const getCharacterInfo = (text: string) => {
+    const length = text.length;
+    let status = '';
+    let color = '';
+    
+    if (length <= 200) {
+      status = '短文 - QRコード生成確実';
+      color = 'text-green-500';
+    } else if (length <= 500) {
+      status = '中文 - QRコード生成可能';
+      color = 'text-blue-500';
+    } else if (length <= 800) {
+      status = '長文 - QRコード生成注意';
+      color = 'text-yellow-500';
+    } else if (length <= 1000) {
+      status = '超長文 - QRコード生成困難';
+      color = 'text-orange-500';
+    } else {
+      status = '文字数制限超過';
+      color = 'text-red-500';
+    }
+    
+    return { length, status, color };
   };
 
   const copyToClipboard = async () => {
     const messageData = {
-      message: message.trim(),
-      name: name.trim() || '匿名',
-      created: new Date().toISOString().split('T')[0]
+      m: message.trim(),
+      n: name.trim() || '',
+      w: writerName.trim() || '',
+      t: Date.now()
     };
 
-    const encodedData = btoa(encodeURIComponent(JSON.stringify(messageData)));
-    const letterUrl = `${window.location.origin}/letter#data=${encodedData}`;
+    const encodedData = optimizedEncode(messageData);
+    const letterUrl = `${window.location.origin}/letter#${encodedData}`;
 
     try {
       await navigator.clipboard.writeText(letterUrl);
@@ -120,6 +286,8 @@ export default function HomePage() {
     link.click();
     document.body.removeChild(link);
   };
+
+  const charInfo = getCharacterInfo(message);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 overflow-hidden">
@@ -159,13 +327,27 @@ export default function HomePage() {
             <div className="grid md:grid-cols-1 gap-6 mb-6">
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-2">
-                  お名前（任意）
+                  相手のお名前（任意）
                 </label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="例: 太郎"
+                  className="w-full px-4 py-3 border border-pink-200 rounded-xl focus:ring-2 focus:ring-rose-300 focus:border-transparent transition-all duration-300 text-gray-700 bg-white/70 hover:bg-white/90"
+                  maxLength={50}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-2">
+                  あなたのお名前（任意）
+                </label>
+                <input
+                  type="text"
+                  value={writerName}
+                  onChange={(e) => setWriterName(e.target.value)}
+                  placeholder="例: 花子"
                   className="w-full px-4 py-3 border border-pink-200 rounded-xl focus:ring-2 focus:ring-rose-300 focus:border-transparent transition-all duration-300 text-gray-700 bg-white/70 hover:bg-white/90"
                   maxLength={50}
                 />
@@ -180,21 +362,53 @@ export default function HomePage() {
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="大切な方への想いやメッセージをお書きください..."
                   className="w-full px-4 py-3 border border-pink-200 rounded-xl focus:ring-2 focus:ring-rose-300 focus:border-transparent transition-all duration-300 resize-none text-gray-700 bg-white/70 hover:bg-white/90"
-                  rows={6}
-                  maxLength={2000}
+                  rows={8}
+                  maxLength={1000}
                 />
-                <p className="text-sm text-gray-400 mt-2">
-                  {message.length}/2000文字
-                </p>
+                
+                {/* 改善されたカウンター表示 */}
+                <div className="flex justify-between items-center mt-2">
+                  <div className={`text-sm font-medium ${charInfo.color}`}>
+                    {charInfo.status}
+                  </div>
+                  <div className="text-sm text-gray-400">
+                    <span className={charInfo.length > 1000 ? 'text-red-500 font-bold' : ''}>
+                      {charInfo.length}
+                    </span>
+                    /1000文字
+                  </div>
+                </div>
+                
+                {/* プログレスバー */}
+                <div className="w-full bg-gray-200 rounded-full h-1 mt-1">
+                  <div 
+                    className={`h-1 rounded-full transition-all duration-300 ${
+                      charInfo.length <= 200 ? 'bg-green-400' :
+                      charInfo.length <= 500 ? 'bg-blue-400' :
+                      charInfo.length <= 800 ? 'bg-yellow-400' :
+                      charInfo.length <= 1000 ? 'bg-orange-400' : 'bg-red-400'
+                    }`}
+                    style={{ width: `${Math.min((charInfo.length / 1000) * 100, 100)}%` }}
+                  />
+                </div>
               </div>
             </div>
 
             <button
-              onClick={generateQRCode}
-              className="w-full bg-gradient-to-r from-rose-400 via-pink-400 cursor-pointer to-purple-400 hover:from-rose-500 hover:via-pink-500 hover:to-purple-500 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl transform hover:scale-105 relative overflow-hidden"
+              onClick={generateOptimizedQRCode}
+              disabled={!message.trim() || message.length > 1000}
+              className={`w-full font-semibold py-4 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl transform hover:scale-105 relative overflow-hidden ${
+                !message.trim() || message.length > 1000
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-gradient-to-r from-rose-400 via-pink-400 to-purple-400 hover:from-rose-500 hover:via-pink-500 hover:to-purple-500 text-white cursor-pointer'
+              }`}
             >
-              <span className="relative z-10">QRコードを生成する</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 translate-x-full group-hover:translate-x-0 transition-transform duration-700"></div>
+              <span className="relative z-10">
+                {message.length > 1000 ? '文字数制限を超えています' : 'QRコードを生成する'}
+              </span>
+              {message.trim() && message.length <= 1000 && (
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 translate-x-full group-hover:translate-x-0 transition-transform duration-700"></div>
+              )}
             </button>
           </div>
 
@@ -214,9 +428,23 @@ export default function HomePage() {
                 />
               </div>
 
-              <p className="text-gray-500 mb-8 max-w-2xl mx-auto text-lg">
-                このQRコードをスマートフォンで読み取ると、あなたのメッセージが表示されます。
-              </p>
+              <div className="mb-6">
+                <div className="text-sm text-gray-500 mb-2">
+                  メッセージ長: {message.length}文字
+                </div>
+                <div className="text-sm text-gray-400">
+                  このQRコードは高密度データに対応しています
+                </div>
+              </div>
+
+              {/* 使用方法の説明を追加 */}
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+                <h4 className="font-semibold text-blue-800 mb-2">📱 QRコードの読み取り方法</h4>
+                <p className="text-sm text-blue-600">
+                  スマートフォンのカメラアプリでQRコードを読み取るか、<br />
+                  QRコードリーダーアプリをご利用ください。
+                </p>
+              </div>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button
@@ -378,6 +606,140 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Modal Components */}
+      {/* メッセージ必須モーダル */}
+      <Modal
+        isOpen={showMessageRequiredModal}
+        onClose={() => setShowMessageRequiredModal(false)}
+        title="メッセージが必要です"
+        type="warning"
+      >
+        <div className="text-center">
+          <p className="text-gray-600 mb-6">
+            メッセージを入力してください。
+          </p>
+          <ModalButton
+            onClick={() => setShowMessageRequiredModal(false)}
+            variant="primary"
+          >
+            了解しました
+          </ModalButton>
+        </div>
+      </Modal>
+
+      {/* メッセージ長すぎモーダル */}
+      <Modal
+        isOpen={showMessageTooLongModal}
+        onClose={() => setShowMessageTooLongModal(false)}
+        title="メッセージが長すぎます"
+        type="warning"
+      >
+        <div className="text-center">
+          <p className="text-gray-600 mb-6">
+            メッセージが長すぎます。1000文字以内にしてください。
+          </p>
+          <ModalButton
+            onClick={() => setShowMessageTooLongModal(false)}
+            variant="primary"
+          >
+            了解しました
+          </ModalButton>
+        </div>
+      </Modal>
+
+      {/* QRコード生成失敗モーダル */}
+      <Modal
+        isOpen={showQRFailureModal}
+        onClose={() => setShowQRFailureModal(false)}
+        title="QRコード生成に失敗しました"
+        type="error"
+      >
+        <div className="text-center">
+          <p className="text-gray-600 mb-6">
+            以下の方法をお試しください：
+          </p>
+          <ul className="text-left text-gray-600 mb-6 space-y-2">
+            <li>• メッセージを短くする（現在: {message.length}文字）</li>
+            <li>• 不要な改行や空白を削除する</li>
+            <li>• しばらく時間をおいて再試行する</li>
+          </ul>
+          <div className="flex gap-3 justify-center">
+            <ModalButton
+              onClick={() => setShowQRFailureModal(false)}
+              variant="secondary"
+            >
+              閉じる
+            </ModalButton>
+            <ModalButton
+              onClick={() => {
+                setShowQRFailureModal(false);
+                setShowURLCopyConfirmModal(true);
+              }}
+              variant="primary"
+            >
+              URLをコピー
+            </ModalButton>
+          </div>
+        </div>
+      </Modal>
+
+      {/* URLコピー確認モーダル */}
+      <ConfirmModal
+        isOpen={showURLCopyConfirmModal}
+        onClose={() => setShowURLCopyConfirmModal(false)}
+        onConfirm={handleURLCopyConfirm}
+        title="URLコピーの確認"
+        message="QRコードの代わりに、直接URLをコピーしますか？"
+        confirmText="コピーする"
+        cancelText="キャンセル"
+        type="info"
+      />
+
+      {/* URLコピー成功モーダル */}
+      <Modal
+        isOpen={showURLCopyModal}
+        onClose={() => setShowURLCopyModal(false)}
+        title="URLをコピーしました"
+        type="success"
+      >
+        <div className="text-center">
+          <p className="text-gray-600 mb-6">
+            URLをコピーしました。このURLを直接シェアできます。
+          </p>
+          <ModalButton
+            onClick={() => setShowURLCopyModal(false)}
+            variant="primary"
+          >
+            了解しました
+          </ModalButton>
+        </div>
+      </Modal>
+
+      {/* URLコピー手動モーダル */}
+      <Modal
+        isOpen={showURLCopyPromptModal}
+        onClose={() => setShowURLCopyPromptModal(false)}
+        title="URLを手動でコピー"
+        type="info"
+      >
+        <div className="text-center">
+          <p className="text-gray-600 mb-4">
+            以下のURLをコピーしてください：
+          </p>
+          <div className="bg-gray-100 p-3 rounded-lg mb-6">
+            <code className="text-sm break-all text-gray-800">
+              {directUrl}
+            </code>
+          </div>
+          <ModalButton
+            onClick={() => setShowURLCopyPromptModal(false)}
+            variant="primary"
+          >
+            了解しました
+          </ModalButton>
+        </div>
+      </Modal>
 
       <style jsx>{`
         @keyframes fade-in {

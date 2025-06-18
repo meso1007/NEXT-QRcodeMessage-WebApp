@@ -17,7 +17,8 @@ export default function Footer() {
                 <a href="/terms" className="hover:text-rose-400 transition-colors duration-300 hover:underline">利用規約</a>
                 <a href="/privacy" className="hover:text-rose-400 transition-colors duration-300 hover:underline">プライバシーポリシー</a>
                 <a href="/faq" className="hover:text-rose-400 transition-colors duration-300 hover:underline">よくある質問</a>
-                <a href="/donate" className="hover:text-rose-400 transition-colors duration-300 hover:underline">寄付について</a>
+                {/* 一時的に寄付機能を無効化（ユーザーが増えるまで） */}
+                {/* <a href="/donate" className="hover:text-rose-400 transition-colors duration-300 hover:underline">寄付について</a> */}
             </div>
             <div className="mt-8 pt-8 border-t border-pink-100">
                 <p className="text-sm">© 2025 Otodoke Life. Made with <span className="cursor-pointer hover:underline hover:text-blue-400" onClick={toProfile}>Shoya Horiuchi</span></p>

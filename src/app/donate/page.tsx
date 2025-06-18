@@ -4,6 +4,7 @@ import { Heart, Users, Target, Bird, Shield, Gift, CreditCard, Building, FolderD
 import Link from 'next/link';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Modal, { ModalButton } from '@/components/Modal';
 
 // Register the plugin
 if (typeof window !== "undefined") {
@@ -273,6 +274,11 @@ const DonationPage = () => {
   const [customAmount, setCustomAmount] = useState<string>('');
   const [isMonthly, setIsMonthly] = useState<boolean>(false);
 
+  // Modal states
+  const [showSelectionRequiredModal, setShowSelectionRequiredModal] = useState(false);
+  const [showDonationConfirmModal, setShowDonationConfirmModal] = useState(false);
+  const [donationDetails, setDonationDetails] = useState<{amount: string | number, method: string}>({amount: '', method: ''});
+
   useEffect(() => {
     // ヘッダーアニメーション
     if (headerRef.current) {
@@ -318,11 +324,12 @@ const DonationPage = () => {
   const handleDonate = () => {
     const amount = selectedAmount === 0 ? customAmount : selectedAmount;
     if (!amount || !selectedMethod) {
-      alert('寄付金額と支払い方法を選択してください。');
+      setShowSelectionRequiredModal(true);
       return;
     }
 
-    alert(`${amount}円の${isMonthly ? '毎月' : ''}寄付手続きを開始します。\n支払い方法: ${donationMethods.find(m => m.id === selectedMethod)?.name}`);
+    setDonationDetails({ amount, method: selectedMethod });
+    setShowDonationConfirmModal(true);
   };
 
   return (
@@ -527,6 +534,60 @@ const DonationPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal Components */}
+      <Modal
+        isOpen={showSelectionRequiredModal}
+        onClose={() => setShowSelectionRequiredModal(false)}
+        title="選択が必要です"
+        type="warning"
+      >
+        <div className="text-center">
+          <p className="text-gray-600 mb-6">
+            寄付金額と支払い方法を選択してください。
+          </p>
+          <ModalButton
+            onClick={() => setShowSelectionRequiredModal(false)}
+            variant="primary"
+          >
+            了解しました
+          </ModalButton>
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={showDonationConfirmModal}
+        onClose={() => setShowDonationConfirmModal(false)}
+        title="寄付の確認"
+        type="info"
+      >
+        <div className="text-center">
+          <p className="text-gray-600 mb-4">
+            {donationDetails.amount}円の{isMonthly ? '毎月' : ''}寄付手続きを開始します。
+          </p>
+          <p className="text-gray-600 mb-6">
+            支払い方法: {donationMethods.find(m => m.id === donationDetails.method)?.name}
+          </p>
+          <div className="flex gap-3 justify-center">
+            <ModalButton
+              onClick={() => setShowDonationConfirmModal(false)}
+              variant="secondary"
+            >
+              キャンセル
+            </ModalButton>
+            <ModalButton
+              onClick={() => {
+                setShowDonationConfirmModal(false);
+                // ここで実際の寄付処理を行う
+                console.log('寄付処理を開始:', donationDetails);
+              }}
+              variant="primary"
+            >
+              寄付を確定
+            </ModalButton>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };
