@@ -59,7 +59,7 @@ const LetterPage = () => {
                 const jsonData = JSON.parse(urlDecoded);
                 
                 // 旧形式データでも安全な日付処理を適用
-                const formatDate = (timestamp: any) => {
+                const formatDate = (timestamp: string | number | undefined) => {
                     if (!timestamp) return new Date().toLocaleDateString('ja-JP');
                     
                     try {
@@ -143,7 +143,7 @@ const LetterPage = () => {
                 console.log('Timestamp value:', jsonData.t);
                 
                 // 安全な日付変換処理
-                const formatDate = (timestamp: any) => {
+                const formatDate = (timestamp: string | number | undefined) => {
                     if (!timestamp) return new Date().toLocaleDateString('ja-JP');
                     
                     try {
