@@ -57,7 +57,31 @@ const LetterPage = () => {
                 const base64Decoded = atob(encodedData);
                 const urlDecoded = decodeURIComponent(base64Decoded);
                 const jsonData = JSON.parse(urlDecoded);
-                setMessageData(jsonData);
+                
+                // 旧形式データでも安全な日付処理を適用
+                const formatDate = (timestamp: any) => {
+                    if (!timestamp) return new Date().toLocaleDateString('ja-JP');
+                    
+                    try {
+                        const date = new Date(Number(timestamp));
+                        if (isNaN(date.getTime())) {
+                            console.warn('Invalid timestamp, using current date');
+                            return new Date().toLocaleDateString('ja-JP');
+                        }
+                        return date.toLocaleDateString('ja-JP');
+                    } catch (error) {
+                        console.warn('Date conversion error:', error);
+                        return new Date().toLocaleDateString('ja-JP');
+                    }
+                };
+                
+                // 日付を安全に処理
+                const safeJsonData = {
+                    ...jsonData,
+                    created: formatDate(jsonData.created || jsonData.t)
+                };
+                
+                setMessageData(safeJsonData);
                 
                 setTimeout(() => {
                     setIsLoading(false);
@@ -114,13 +138,33 @@ const LetterPage = () => {
 
                 const jsonData = optimizedDecode(encodedData);
                 
+                // デバッグ用ログ
+                console.log('Decoded JSON data:', jsonData);
+                console.log('Timestamp value:', jsonData.t);
+                
+                // 安全な日付変換処理
+                const formatDate = (timestamp: any) => {
+                    if (!timestamp) return new Date().toLocaleDateString('ja-JP');
+                    
+                    try {
+                        const date = new Date(Number(timestamp));
+                        if (isNaN(date.getTime())) {
+                            console.warn('Invalid timestamp, using current date');
+                            return new Date().toLocaleDateString('ja-JP');
+                        }
+                        return date.toLocaleDateString('ja-JP');
+                    } catch (error) {
+                        console.warn('Date conversion error:', error);
+                        return new Date().toLocaleDateString('ja-JP');
+                    }
+                };
+                
                 // 新形式のデータを旧形式に変換
                 const convertedData: MessageData = {
                     message: jsonData.m || jsonData.message || '',
                     name: jsonData.n || jsonData.name || '匿名',
                     writerName: jsonData.w || jsonData.writerName || '匿名',
-                    created: jsonData.t ? new Date(jsonData.t).toLocaleDateString('ja-JP') : 
-                             jsonData.c || jsonData.created || new Date().toLocaleDateString('ja-JP'),
+                    created: formatDate(jsonData.t),
                     id: jsonData.id || 'generated-id'
                 };
                 
