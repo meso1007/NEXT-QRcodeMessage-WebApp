@@ -76,7 +76,8 @@ OtoDoke is a platform designed to help you preserve and share your heartfelt mes
 - Sender information and timestamp
 - Elegant presentation
 
-![Letter View Page](./public/readme/letterPage.png)
+![Letter Unopened Page](./public/readme/letterPage.png)
+![Letter Opened Page](./public/readme/letterPage2.png)
 
 ---
 
