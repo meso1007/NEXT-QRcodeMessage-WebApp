@@ -24,7 +24,7 @@ export default function Header() {
   ];
 
   return (
-    <header className="bg-white/70 backdrop-blur-sm border-b border-pink-100 sticky top-0 z-50 px-3">
+    <header className="md:bg-white/70 backdrop-blur-sm border-b border-pink-100 sticky top-0 z-50 px-3 bg-gray/20">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex items-center justify-between py-4">
           {/* ロゴ部分 */}

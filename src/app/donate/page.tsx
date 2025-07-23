@@ -105,22 +105,22 @@ const impactStats = [
 
 const testimonials = [
   {
-    name: '田中 美咲さん',
+    name: 'Mさん',
     role: '個人寄付者',
     comment: 'このサービスのおかげで大切な思い出を安心して残せています。心から感謝しています。',
-    avatar: '👩‍💼'
+    avatar: ''
   },
   {
-    name: '佐藤 健一さん',
+    name: 'Kさん',
     role: '初回寄付者',
     comment: '非営利で個人運営されていることに共感し、少額ですが応援させていただきました。',
-    avatar: '👨‍💼'
+    avatar: ''
   },
   {
-    name: '山本 由美子さん',
+    name: 'Yさん',
     role: '利用者',
     comment: '思い出のメッセージをQRコードにできて、家族で何度も見返せるのが嬉しいです。',
-    avatar: '👩‍🎓'
+    avatar: ''
   }
 ];
 
@@ -455,7 +455,7 @@ const DonationPage = () => {
             <button
               onClick={handleDonate}
               disabled={!selectedAmount && !customAmount || !selectedMethod}
-              className="bg-gradient-to-r from-blue-600 to-purple-700 text-white px-12 py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105"
+              className="bg-gradient-to-r from-blue-600 to-purple-700 text-white px-12 py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 disable  hover:cursor-disable"
             >
               {isMonthly ? '継続寄付を開始する' : '寄付する'}
             </button>

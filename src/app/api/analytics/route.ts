@@ -34,7 +34,7 @@ export async function GET() {
     });
 
     const totalScans = response.data.rows?.reduce((sum: number, row: analyticsdata_v1beta.Schema$Row) => {
-      if (row.dimensionValues?.[0].value?.includes('/letter')) {
+      if (row.dimensionValues?.[0].value?.includes('/')) {
         return sum + Number(row.metricValues?.[0].value || 0);
       }
       return sum;

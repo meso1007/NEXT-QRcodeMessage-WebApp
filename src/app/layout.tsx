@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://otodokelife.com/'),
   title: "OTODOKE LIFE - 大切な人への想いを残す場所",
   description: "大切な人への想いやメッセージを、安全で意味のある形で残すためのプラットフォームです。QRコードを通じて、あなたの想いを未来へ届けます。",
-  keywords: "メッセージ, QRコード, 想い, メモリー, デジタルレター, 大切な人へのメッセージ",
+  keywords: "メッセージ, QRコード, 想い, メモリー, デジタルレター, 大切な人へのメッセージ 電子手紙 電子遺書 手紙",
   authors: [{ name: "Shoya Horiuchi" }],
   creator: "Shoya Horiuchi",
   publisher: "OTODOKE LIFE",
@@ -81,7 +81,9 @@ export default function RootLayout({
         {/* Google Analytics */}
         <Script
           strategy="afterInteractive"
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+          // src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+          src={`https://www.googletagmanager.com/gtag/js?id=G-R6DS0MJ3M4`}
+
         />
         <Script
           id="google-analytics"
@@ -95,6 +97,7 @@ export default function RootLayout({
             `,
           }}
         />
+        
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50`}
