@@ -1,6 +1,6 @@
 "use client"
-import React, { ReactNode, useEffect, useRef, useState } from 'react';
-import { Heart, Users, Target, Bird, Shield, Gift, CreditCard, Building, FolderDot, CheckCircle, Star, Globe, DollarSign, Router, JapaneseYen, TrafficCone } from 'lucide-react';
+import React, {useEffect, useRef, useState } from 'react';
+import { Heart, Users, Target, Bird, Shield, Gift, CreditCard, Building, FolderDot, Globe, DollarSign, Router, TrafficCone } from 'lucide-react';
 import Link from 'next/link';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -17,41 +17,6 @@ interface StatCardProps {
   label: string;
 }
 
-interface Testimonial {
-  avatar: string;
-  name: string;
-  role: string;
-  comment: string;
-}
-
-interface TestimonialCardProps {
-  testimonial: Testimonial;
-  index: number;
-}
-
-interface PaymentMethod {
-  id: string;
-  icon: React.ReactNode;
-  name: string;
-  description: string;
-  fee: string;
-  processing: string;
-}
-
-interface PaymentMethodCardProps {
-  method: PaymentMethod;
-  isSelected: boolean;
-  onClick: (id: string) => void;
-}
-
-const donationAmounts = [
-  { amount: 1000, label: '1,000円', description: '' },
-  { amount: 3000, label: '3,000円', description: '' },
-  { amount: 5000, label: '5,000円', description: '' },
-  { amount: 10000, label: '10,000円', description: '' },
-  { amount: 30000, label: '30,000円', description: '' },
-  { amount: 0, label: 'その他の金額', description: '' }
-];
 
 const donationMethods = [
   {
@@ -103,114 +68,9 @@ const impactStats = [
   },
 ];
 
-const testimonials = [
-  {
-    name: 'Mさん',
-    role: '個人寄付者',
-    comment: 'このサービスのおかげで大切な思い出を安心して残せています。心から感謝しています。',
-    avatar: ''
-  },
-  {
-    name: 'Kさん',
-    role: '初回寄付者',
-    comment: '非営利で個人運営されていることに共感し、少額ですが応援させていただきました。',
-    avatar: ''
-  },
-  {
-    name: 'Yさん',
-    role: '利用者',
-    comment: '思い出のメッセージをQRコードにできて、家族で何度も見返せるのが嬉しいです。',
-    avatar: ''
-  }
-];
 
-type DonationCardContents = {
-  amount: number,
-  label: ReactNode,
-  description: string,
-  isSelected: boolean,
-  onClick: (amount: number) => void,
-  isCustom: boolean
-}
 
-const DonationCard = ({ amount, label, description, isSelected, onClick, isCustom = false }: DonationCardContents) => {
-  const cardRef = useRef(null);
 
-  useEffect(() => {
-    if (cardRef.current) {
-      gsap.fromTo(cardRef.current,
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.6, delay: Math.random() * 0.3 }
-      );
-    }
-  }, []);
-
-  return (
-    <div
-      ref={cardRef}
-      onClick={() => onClick(amount)}
-      className={`relative p-6 rounded-xl border-2 cursor-pointer transition-all duration-300 ${isSelected
-        ? 'border-blue-500 bg-blue-50 shadow-lg scale-105'
-        : 'border-gray-200 bg-white hover:border-blue-300 hover:shadow-md'
-        }`}
-    >
-      {isSelected && (
-        <div className="absolute -top-2 -right-2 bg-blue-500 text-white rounded-full p-1">
-          <CheckCircle className="w-4 h-4" />
-        </div>
-      )}
-
-      <div className="text-center">
-        <div className="text-2xl font-bold text-gray-800 mb-2">
-          {isCustom ? <JapaneseYen className="w-8 h-8 mx-auto text-blue-500" /> : label}
-        </div>
-        <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
-      </div>
-    </div>
-  );
-};
-
-const PaymentMethodCard = ({ method, isSelected, onClick }: PaymentMethodCardProps) => {
-  const cardRef = useRef(null);
-
-  useEffect(() => {
-    if (cardRef.current) {
-      gsap.fromTo(cardRef.current,
-        { opacity: 0, x: -20 },
-        { opacity: 1, x: 0, duration: 0.6, delay: Math.random() * 0.2 }
-      );
-    }
-  }, []);
-
-  return (
-    <div
-      ref={cardRef}
-      onClick={() => onClick(method.id)}
-      className={`p-6 rounded-xl border-2 cursor-pointer transition-all duration-300 ${isSelected
-        ? 'border-green-500 bg-green-50 shadow-lg'
-        : 'border-gray-200 bg-white hover:border-green-300 hover:shadow-md'
-        }`}
-    >
-      <div className="flex items-start space-x-4">
-        <div className={`p-3 rounded-full ${isSelected ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-600'
-          }`}>
-          {method.icon}
-        </div>
-        <div className="flex-1">
-          <h3 className="font-semibold text-gray-800 mb-1">{method.name}</h3>
-          <p className="text-sm text-gray-600 mb-2">{method.description}</p>
-          <div className="flex justify-between text-xs text-gray-500">
-            <span>手数料: {method.fee}</span>
-            <span>処理: {method.processing}</span>
-          </div>
-        </div>
-        {isSelected && (
-          <CheckCircle className="w-5 h-5 text-green-500" />
-        )}
-      </div>
-    </div>
-  );
-};
 
 const StatCard = ({ icon, value, label }: StatCardProps) => {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -235,49 +95,17 @@ const StatCard = ({ icon, value, label }: StatCardProps) => {
   );
 };
 
-const TestimonialCard = ({ testimonial, index }: TestimonialCardProps) => {
-  const cardRef = useRef(null);
 
-  useEffect(() => {
-    if (cardRef.current) {
-      gsap.fromTo(cardRef.current,
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.8, delay: index * 0.2 }
-      );
-    }
-  }, [index]);
-
-  return (
-    <div ref={cardRef} className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-lg">
-      <div className="flex items-center space-x-4 mb-4">
-        <div className="text-3xl">{testimonial.avatar}</div>
-        <div>
-          <h4 className="font-semibold text-gray-800">{testimonial.name}</h4>
-          <p className="text-sm text-gray-600">{testimonial.role}</p>
-        </div>
-      </div>
-      <p className="text-gray-700 leading-relaxed">{testimonial.comment}</p>
-      <div className="flex space-x-1 mt-4">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <Star key={star} className="w-4 h-4 text-yellow-400 fill-current" />
-        ))}
-      </div>
-    </div>
-  );
-};
 
 const DonationPage = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
-  const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
-  const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
-  const [customAmount, setCustomAmount] = useState<string>('');
-  const [isMonthly, setIsMonthly] = useState<boolean>(false);
+  const [isMonthly] = useState<boolean>(false);
 
   // Modal states
   const [showSelectionRequiredModal, setShowSelectionRequiredModal] = useState(false);
   const [showDonationConfirmModal, setShowDonationConfirmModal] = useState(false);
-  const [donationDetails, setDonationDetails] = useState<{ amount: string | number, method: string }>({ amount: '', method: '' });
+  const [donationDetails] = useState<{ amount: string | number, method: string }>({ amount: '', method: '' });
 
   useEffect(() => {
     // ヘッダーアニメーション
@@ -309,28 +137,7 @@ const DonationPage = () => {
     }
   }, []);
 
-  const handleAmountSelect = (amount: number) => {
-    setSelectedAmount(amount);
-    if (amount !== 0) {
-      setCustomAmount('');
-    }
-  };
 
-  const handleCustomAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCustomAmount(e.target.value);
-    setSelectedAmount(0);
-  };
-
-  const handleDonate = () => {
-    const amount = selectedAmount === 0 ? customAmount : selectedAmount;
-    if (!amount || !selectedMethod) {
-      setShowSelectionRequiredModal(true);
-      return;
-    }
-
-    setDonationDetails({ amount, method: selectedMethod });
-    setShowDonationConfirmModal(true);
-  };
 
   return (
     <div
