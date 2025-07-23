@@ -5,6 +5,7 @@ import { Heart, QrCode, Shield, Download, Copy, Check, Sparkles, Lock, Clock, Us
 import CountUp from 'react-countup';
 import Image from 'next/image';
 import Modal, { ConfirmModal, ModalButton } from '@/components/Modal';
+import ReviewModal from '@/components/ReviewModal';
 
 export default function HomePage() {
   const [message, setMessage] = useState('');
@@ -20,6 +21,8 @@ export default function HomePage() {
     stats: false,
     features: false,
   });
+  const [showReviewModal, setShowReviewModal] = useState(false);
+
 
   // Modal states
   const [showMessageRequiredModal, setShowMessageRequiredModal] = useState(false);
@@ -35,7 +38,7 @@ export default function HomePage() {
     about?: boolean;
     contact?: boolean;
     stats?: boolean;
-    features?:boolean
+    features?: boolean
     // 他にあれば追加
   };
   const heroRef = useRef(null);
@@ -89,7 +92,7 @@ export default function HomePage() {
       .replace(/["{}]/g, '') // 不要な文字を削除
       .replace(/,/g, '|')    // カンマをパイプに置換（短縮）
       .replace(/:/g, '~');   // コロンをチルダに置換（短縮）
-    
+
     return btoa(encodeURIComponent(compressed))
       .replace(/\+/g, '-')   // URL安全文字に変換
       .replace(/\//g, '_')   // URL安全文字に変換
@@ -142,14 +145,14 @@ export default function HomePage() {
         url: `https://api.qrserver.com/v1/create-qr-code/?size=${qrConfig.size}&data=${encodeURIComponent(letterUrl)}&format=${qrConfig.format}&ecc=${qrConfig.ecc}&margin=${qrConfig.margin}`,
         maxLength: 2000
       },
-      
+
       // 2. QRicKit（より大容量対応）
       {
         name: 'QRicKit',
         url: `https://qrickit.com/api/qr?d=${encodeURIComponent(letterUrl)}&s=20&border=1&download=0`,
         maxLength: 4000
       },
-      
+
       // 3. QR-Code-Generator（高容量）
       {
         name: 'QR Code Generator',
@@ -166,7 +169,7 @@ export default function HomePage() {
     // QRコード生成とテスト
     try {
       const testResponse = await fetch(selectedService.url, { method: 'HEAD' });
-      
+
       if (testResponse.ok) {
         setQrCodeUrl(selectedService.url);
         setShowQR(true);
@@ -176,30 +179,30 @@ export default function HomePage() {
       }
     } catch (error) {
       console.log(`Primary service failed:`, error);
-      
+
       // フォールバック: 次のサービスを試す
       for (let i = 1; i < qrServices.length; i++) {
         try {
           const fallbackUrl = qrServices[i].url;
           const testImg = new window.Image();
-          
+
           await new Promise((resolve, reject) => {
             testImg.onload = resolve;
             testImg.onerror = reject;
             testImg.src = fallbackUrl;
           });
-          
+
           setQrCodeUrl(fallbackUrl);
           setShowQR(true);
           console.log(`Fallback successful with ${qrServices[i].name}`);
           return;
-          
+
         } catch (fallbackError) {
           console.log(`Fallback ${qrServices[i].name} failed:`, fallbackError);
           continue;
         }
       }
-      
+
       // 全て失敗した場合の最終手段
       handleQRGenerationFailure();
     }
@@ -208,7 +211,7 @@ export default function HomePage() {
   // 5. QRコード生成失敗時の処理
   const handleQRGenerationFailure = () => {
     setShowQRFailureModal(true);
-    
+
     // URLを直接コピーできるオプションを提供
     const messageData = {
       m: message.trim(),
@@ -216,7 +219,7 @@ export default function HomePage() {
       w: writerName.trim() || '',
       t: Date.now()
     };
-    
+
     const encodedData = optimizedEncode(messageData);
     const directUrlValue = `${window.location.origin}/letter#${encodedData}`;
     setDirectUrl(directUrlValue);
@@ -230,12 +233,18 @@ export default function HomePage() {
     });
   };
 
+  // QRコード生成＋レビュー用モーダル表示
+  const handleGenerateAndShowModal = async () => {
+    await generateOptimizedQRCode();
+    setShowReviewModal(true);
+  };
+
   // 6. 文字数リアルタイム表示の改善
   const getCharacterInfo = (text: string) => {
     const length = text.length;
     let status = '';
     let color = '';
-    
+
     if (length <= 200) {
       status = '短文 - QRコード生成確実';
       color = 'text-green-500';
@@ -252,7 +261,7 @@ export default function HomePage() {
       status = '文字数制限超過';
       color = 'text-red-500';
     }
-    
+
     return { length, status, color };
   };
 
@@ -288,6 +297,14 @@ export default function HomePage() {
   };
 
   const charInfo = getCharacterInfo(message);
+
+  // 5分後にReviewModalを自動表示
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowReviewModal(true);
+    }, 5 * 60 * 1000); // 5分 = 300,000ms
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50 overflow-hidden">
@@ -365,7 +382,7 @@ export default function HomePage() {
                   rows={8}
                   maxLength={1000}
                 />
-                
+
                 {/* 改善されたカウンター表示 */}
                 <div className="flex justify-between items-center mt-2">
                   <div className={`text-sm font-medium ${charInfo.color}`}>
@@ -378,30 +395,29 @@ export default function HomePage() {
                     /1000文字
                   </div>
                 </div>
-                
+
                 {/* プログレスバー */}
                 <div className="w-full bg-gray-200 rounded-full h-1 mt-1">
-                  <div 
-                    className={`h-1 rounded-full transition-all duration-300 ${
-                      charInfo.length <= 200 ? 'bg-green-400' :
-                      charInfo.length <= 500 ? 'bg-blue-400' :
-                      charInfo.length <= 800 ? 'bg-yellow-400' :
-                      charInfo.length <= 1000 ? 'bg-orange-400' : 'bg-red-400'
-                    }`}
+                  <div
+                    className={`h-1 rounded-full transition-all duration-300 ${charInfo.length <= 200 ? 'bg-green-400' :
+                        charInfo.length <= 500 ? 'bg-blue-400' :
+                          charInfo.length <= 800 ? 'bg-yellow-400' :
+                            charInfo.length <= 1000 ? 'bg-orange-400' : 'bg-red-400'
+                      }`}
                     style={{ width: `${Math.min((charInfo.length / 1000) * 100, 100)}%` }}
                   />
                 </div>
               </div>
             </div>
 
+
             <button
-              onClick={generateOptimizedQRCode}
+              onClick={handleGenerateAndShowModal}
               disabled={!message.trim() || message.length > 1000}
-              className={`w-full font-semibold py-4 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl transform hover:scale-105 relative overflow-hidden ${
-                !message.trim() || message.length > 1000
+              className={`w-full font-semibold py-4 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl transform hover:scale-105 relative overflow-hidden ${!message.trim() || message.length > 1000
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   : 'bg-gradient-to-r from-rose-400 via-pink-400 to-purple-400 hover:from-rose-500 hover:via-pink-500 hover:to-purple-500 text-white cursor-pointer'
-              }`}
+                }`}
             >
               <span className="relative z-10">
                 {message.length > 1000 ? '文字数制限を超えています' : 'QRコードを生成する'}
@@ -411,6 +427,8 @@ export default function HomePage() {
               )}
             </button>
           </div>
+
+            <ReviewModal open={showReviewModal} onClose={() => setShowReviewModal(false)} />
 
           {/* QRコード表示 */}
           {showQR && (
@@ -480,7 +498,7 @@ export default function HomePage() {
             <div className="text-center bg-white/40 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/60 transition-all duration-300 transform hover:scale-105">
               <Users className="w-12 h-12 text-rose-400 mx-auto mb-4" />
               <div className="text-3xl font-bold text-gray-700 mb-2">
-                <CountUp end={400} duration={6} separator="," suffix="+" />
+                <CountUp end={150} duration={6} separator="," suffix="+" />
               </div>
               <div className="text-gray-500">作成されたメッセージ</div>
             </div>
@@ -600,8 +618,8 @@ export default function HomePage() {
               <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-emerald-400 rounded-full flex items-center justify-center mx-auto mb-6 text-white text-2xl font-bold group-hover:scale-110 transition-transform duration-300">
                 3
               </div>
-              <h3 className="text-xl font-semibold text-gray-700 mb-4">印刷・設置</h3>
-              <p className="text-gray-500">QRコードを印刷して、墓石や思い出の品に貼り付けてください</p>
+              <h3 className="text-xl font-semibold text-gray-700 mb-4">印刷・設置・保管</h3>
+              <p className="text-gray-500">QRコードを印刷して、墓石や思い出の品に貼り付けるなど保管してください</p>
             </div>
           </div>
         </div>

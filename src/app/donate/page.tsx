@@ -1,6 +1,6 @@
 "use client"
 import React, { ReactNode, useEffect, useRef, useState } from 'react';
-import { Heart, Users, Target, Bird, Shield, Gift, CreditCard, Building, FolderDot, CheckCircle, Star, Globe, DollarSign, Router, JapaneseYen } from 'lucide-react';
+import { Heart, Users, Target, Bird, Shield, Gift, CreditCard, Building, FolderDot, CheckCircle, Star, Globe, DollarSign, Router, JapaneseYen, TrafficCone } from 'lucide-react';
 import Link from 'next/link';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -82,7 +82,7 @@ const donationMethods = [
 
 const impactStats = [
   {
-    number: 'ドメイン代・運営費',
+    number: '運営費',
     label: 'サービスを安全に、ずっと続けるため',
     icon: <DollarSign className="text-white w-8 h-8" />
   },
@@ -375,13 +375,26 @@ const DonationPage = () => {
 
         {/* Donation Form */}
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-2xl mb-16">
-          <div className="flex items-center space-x-3 mb-8">
+        
+<div className="flex flex-col items-center justify-center py-16">
+  <div className="flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-yellow-100 to-orange-200 shadow-lg mb-4">
+    <TrafficCone className="w-12 h-12 text-orange-400" />
+  </div>
+  <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2 text-center">
+    この機能は現在開発中です。
+  </h1>
+  <p className="text-gray-500 text-center max-w-md">
+    ご不便をおかけして申し訳ありません。<br />
+    公開まで今しばらくお待ちください。
+  </p>
+</div>
+                  {/* <div className="flex items-center space-x-3 mb-8">
             <Gift className="w-6 h-6 text-blue-600" />
             <h2 className="text-2xl font-bold text-gray-800">寄付をする</h2>
-          </div>
+          </div> */}
 
           {/* Monthly/One-time Toggle */}
-          <div className="flex items-center justify-center mb-8">
+          {/* <div className="flex items-center justify-center mb-8">
             <div className="bg-gray-100 rounded-full p-1 flex">
               <button
                 onClick={() => setIsMonthly(false)}
@@ -398,10 +411,10 @@ const DonationPage = () => {
                 継続寄付
               </button>
             </div>
-          </div>
+          </div> */}
 
           {/* Amount Selection */}
-          <div className="mb-8">
+          {/* <div className="mb-8">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">
               寄付金額を選択してください
             </h3>
@@ -431,10 +444,10 @@ const DonationPage = () => {
                 />
               </div>
             )}
-          </div>
+          </div> */}
 
           {/* Payment Methods */}
-          <div className="mb-8">
+          {/* <div className="mb-8">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">
               支払い方法を選択してください
             </h3>
@@ -448,10 +461,10 @@ const DonationPage = () => {
                 />
               ))}
             </div>
-          </div>
+          </div> */}
 
           {/* Donation Button */}
-          <div className="text-center">
+          {/* <div className="text-center">
             <button
               onClick={handleDonate}
               disabled={!selectedAmount && !customAmount || !selectedMethod}
@@ -462,11 +475,11 @@ const DonationPage = () => {
             <p className="text-sm text-gray-600 mt-4">
               SSL暗号化により安全に処理されます
             </p>
-          </div>
+          </div> */}
         </div>
 
         {/* Testimonials */}
-        <div className="mb-16">
+        {/* <div className="mb-16">
           <h2 className="text-3xl font-bold text-gray-800 text-center mb-12">
             支援者の声
           </h2>
@@ -475,7 +488,7 @@ const DonationPage = () => {
               <TestimonialCard key={index} testimonial={testimonial} index={index} />
             ))}
           </div>
-        </div>
+        </div> */}
 
         {/* Trust & Transparency */}
         <div className="bg-gradient-to-r from-blue-600 to-purple-700 rounded-2xl p-8 text-white shadow-2xl mb-16">
@@ -523,7 +536,7 @@ const DonationPage = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
             <div>
               <h4 className="font-semibold text-gray-800 mb-2">電話でのお問い合わせ</h4>
-              <Link href="tel:0120123456" className="text-gray-600 mb-1 hover:text-blue-400 duration-300">0120-123-456</Link>
+              <Link href="tel:0120123456" className="text-gray-600 mb-1 hover:text-blue-400 duration-300">070-8458-6447</Link>
               <p className="text-sm text-gray-500">原則緊急時以外はメールでのお問い合わせをお願いしております</p>
             </div>
             <div>
