@@ -12,36 +12,36 @@ if (typeof window !== "undefined") {
 }
 
 interface StatCardProps {
-    icon: React.ReactNode;
-    value: string;
-    label: string;
+  icon: React.ReactNode;
+  value: string;
+  label: string;
 }
 
 interface Testimonial {
-    avatar: string;
-    name: string;
-    role: string;
-    comment: string;
+  avatar: string;
+  name: string;
+  role: string;
+  comment: string;
 }
 
 interface TestimonialCardProps {
-    testimonial: Testimonial;
-    index: number;
+  testimonial: Testimonial;
+  index: number;
 }
 
 interface PaymentMethod {
-    id: string;
-    icon: React.ReactNode;
-    name: string;
-    description: string;
-    fee: string;
-    processing: string;
+  id: string;
+  icon: React.ReactNode;
+  name: string;
+  description: string;
+  fee: string;
+  processing: string;
 }
 
 interface PaymentMethodCardProps {
-    method: PaymentMethod;
-    isSelected: boolean;
-    onClick: (id: string) => void;
+  method: PaymentMethod;
+  isSelected: boolean;
+  onClick: (id: string) => void;
 }
 
 const donationAmounts = [
@@ -277,7 +277,7 @@ const DonationPage = () => {
   // Modal states
   const [showSelectionRequiredModal, setShowSelectionRequiredModal] = useState(false);
   const [showDonationConfirmModal, setShowDonationConfirmModal] = useState(false);
-  const [donationDetails, setDonationDetails] = useState<{amount: string | number, method: string}>({amount: '', method: ''});
+  const [donationDetails, setDonationDetails] = useState<{ amount: string | number, method: string }>({ amount: '', method: '' });
 
   useEffect(() => {
     // ヘッダーアニメーション
@@ -375,20 +375,20 @@ const DonationPage = () => {
 
         {/* Donation Form */}
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-2xl mb-16">
-        
-<div className="flex flex-col items-center justify-center py-16">
-  <div className="flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-yellow-100 to-orange-200 shadow-lg mb-4">
-    <TrafficCone className="w-12 h-12 text-orange-400" />
-  </div>
-  <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2 text-center">
-    この機能は現在開発中です。
-  </h1>
-  <p className="text-gray-500 text-center max-w-md">
-    ご不便をおかけして申し訳ありません。<br />
-    公開まで今しばらくお待ちください。
-  </p>
-</div>
-                  {/* <div className="flex items-center space-x-3 mb-8">
+
+          <div className="flex flex-col items-center justify-center py-16">
+            <div className="flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-yellow-100 to-orange-200 shadow-lg mb-4">
+              <TrafficCone className="w-12 h-12 text-orange-400" />
+            </div>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2 text-center">
+              この機能は現在開発中です。
+            </h1>
+            <p className="text-gray-500 text-center max-w-md">
+              ご不便をおかけして申し訳ありません。<br />
+              公開まで今しばらくお待ちください。
+            </p>
+          </div>
+          {/* <div className="flex items-center space-x-3 mb-8">
             <Gift className="w-6 h-6 text-blue-600" />
             <h2 className="text-2xl font-bold text-gray-800">寄付をする</h2>
           </div> */}
