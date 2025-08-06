@@ -95,7 +95,7 @@ const FAQData = [
             },
             {
                 question: "他の人に見られる心配はありませんか？",
-                answer: "はい。お客様のメッセージはQRコードとして発行されます。このQRコードを読み取られない限り他の人に見られる心配はありません。"
+                answer: "はい。お客様のメッセージは暗号化され圧縮した状態でQRコードとして発行されます。このQRコードを読み取られない限り他の人に見られる心配はありません。"
             },
         ]
     },
@@ -251,13 +251,13 @@ export default function FAQPage() {
 
             // Floating animation for the title icon
             if (titleRef.current) {
-            gsap.to(titleRef.current.querySelector('svg'), {
-                y: -10,
-                duration: 2,
-                ease: "power1.inOut",
-                yoyo: true,
-                repeat: -1,
-            });
+                gsap.to(titleRef.current.querySelector('svg'), {
+                    y: -10,
+                    duration: 2,
+                    ease: "power1.inOut",
+                    yoyo: true,
+                    repeat: -1,
+                });
             }
 
         }, containerRef);

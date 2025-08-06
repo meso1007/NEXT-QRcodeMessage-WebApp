@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Heart, QrCode, Shield, Download, Copy, Check, Sparkles, Lock, Clock, Users } from 'lucide-react';
+import LZString from 'lz-string';
 import CountUp from 'react-countup';
 import Image from 'next/image';
 import Modal, { ConfirmModal, ModalButton } from '@/components/Modal';
@@ -85,18 +86,11 @@ export default function HomePage() {
     return () => clearInterval(timer);
   }, []);
 
-  // 2. Base64エンコードの最適化版
-  const optimizedEncode = (data: { [key: string]: string | number }) => {
-    // 日本語文字の効率的なエンコード
-    const compressed = JSON.stringify(data)
-      .replace(/["{}]/g, '') // 不要な文字を削除
-      .replace(/,/g, '|')    // カンマをパイプに置換（短縮）
-      .replace(/:/g, '~');   // コロンをチルダに置換（短縮）
-
-    return btoa(encodeURIComponent(compressed))
-      .replace(/\+/g, '-')   // URL安全文字に変換
-      .replace(/\//g, '_')   // URL安全文字に変換
-      .replace(/=/g, '');    // パディングを削除
+  // 2. lz-string を使用したデータ圧縮
+  const compressData = (data: { [key: string]: string | number }) => {
+    const jsonString = JSON.stringify(data);
+    // compressToEncodedURIComponent は、圧縮後の文字列をURLで安全に使用できるようにエンコードします。
+    return LZString.compressToEncodedURIComponent(jsonString);
   };
 
   // 4. 最適化されたQRコード生成関数
@@ -106,8 +100,9 @@ export default function HomePage() {
       return;
     }
 
-    // 文字数制限を大幅に緩和（最大1000文字まで対応）
-    if (message.length > 1000) {
+    // 新しい文字数制限（UIと合わせる）
+    const maxLength = 5000;
+    if (message.length > maxLength) {
       setShowMessageTooLongModal(true);
       return;
     }
@@ -120,8 +115,8 @@ export default function HomePage() {
       t: Date.now() // タイムスタンプを数値で保存（より短い）
     };
 
-    // 最適化エンコード
-    const encodedData = optimizedEncode(compactData);
+    // lz-stringで圧縮
+    const encodedData = compressData(compactData);
     const letterUrl = `${window.location.origin}/letter#${encodedData}`;
 
     console.log('Original message length:', message.length);
@@ -220,7 +215,7 @@ export default function HomePage() {
       t: Date.now()
     };
 
-    const encodedData = optimizedEncode(messageData);
+    const encodedData = compressData(messageData);
     const directUrlValue = `${window.location.origin}/letter#${encodedData}`;
     setDirectUrl(directUrlValue);
   };
@@ -241,30 +236,33 @@ export default function HomePage() {
 
   // 6. 文字数リアルタイム表示の改善
   const getCharacterInfo = (text: string) => {
+    const maxLength = 5000; // UI上の現実的な上限を設定
     const length = text.length;
     let status = '';
     let color = '';
 
-    if (length <= 200) {
+    if (length <= 1000) {
       status = '短文 - QRコード生成確実';
       color = 'text-green-500';
-    } else if (length <= 500) {
+    } else if (length <= 2500) {
       status = '中文 - QRコード生成可能';
       color = 'text-blue-500';
-    } else if (length <= 800) {
-      status = '長文 - QRコード生成注意';
+    } else if (length <= 4000) {
+      status = '長文 - QRコード生成に成功する可能性が高いです';
       color = 'text-yellow-500';
-    } else if (length <= 1000) {
-      status = '超長文 - QRコード生成困難';
+    } else if (length <= maxLength) {
+      status = '超長文 - 内容によりQR生成が失敗する可能性があります';
       color = 'text-orange-500';
     } else {
       status = '文字数制限超過';
       color = 'text-red-500';
     }
 
-    return { length, status, color };
+    return { length, status, color, maxLength };
   };
 
+  const charInfo = getCharacterInfo(message);
+  
   const copyToClipboard = async () => {
     const messageData = {
       m: message.trim(),
@@ -273,7 +271,7 @@ export default function HomePage() {
       t: Date.now()
     };
 
-    const encodedData = optimizedEncode(messageData);
+    const encodedData = compressData(messageData);
     const letterUrl = `${window.location.origin}/letter#${encodedData}`;
 
     try {
@@ -295,8 +293,6 @@ export default function HomePage() {
     link.click();
     document.body.removeChild(link);
   };
-
-  const charInfo = getCharacterInfo(message);
 
   // 5分後にReviewModalを自動表示
   useEffect(() => {
@@ -380,7 +376,7 @@ export default function HomePage() {
                   placeholder="大切な方への想いやメッセージをお書きください..."
                   className="w-full px-4 py-3 border border-pink-200 rounded-xl focus:ring-2 focus:ring-rose-300 focus:border-transparent transition-all duration-300 resize-none text-gray-700 bg-white/70 hover:bg-white/90"
                   rows={8}
-                  maxLength={1000}
+                  maxLength={charInfo.maxLength}
                 />
 
                 {/* 改善されたカウンター表示 */}
@@ -389,10 +385,10 @@ export default function HomePage() {
                     {charInfo.status}
                   </div>
                   <div className="text-sm text-gray-400">
-                    <span className={charInfo.length > 1000 ? 'text-red-500 font-bold' : ''}>
+                    <span className={charInfo.length > charInfo.maxLength ? 'text-red-500 font-bold' : ''}>
                       {charInfo.length}
                     </span>
-                    /1000文字
+                    /{charInfo.maxLength}文字
                   </div>
                 </div>
 
@@ -400,11 +396,11 @@ export default function HomePage() {
                 <div className="w-full bg-gray-200 rounded-full h-1 mt-1">
                   <div
                     className={`h-1 rounded-full transition-all duration-300 ${charInfo.length <= 200 ? 'bg-green-400' :
-                        charInfo.length <= 500 ? 'bg-blue-400' :
-                          charInfo.length <= 800 ? 'bg-yellow-400' :
-                            charInfo.length <= 1000 ? 'bg-orange-400' : 'bg-red-400'
+                      charInfo.length <= 2500 ? 'bg-blue-400' :
+                        charInfo.length <= 4000 ? 'bg-yellow-400' :
+                          charInfo.length <= charInfo.maxLength ? 'bg-orange-400' : 'bg-red-400'
                       }`}
-                    style={{ width: `${Math.min((charInfo.length / 1000) * 100, 100)}%` }}
+                    style={{ width: `${Math.min((charInfo.length / charInfo.maxLength) * 100, 100)}%` }}
                   />
                 </div>
               </div>
@@ -413,22 +409,22 @@ export default function HomePage() {
 
             <button
               onClick={handleGenerateAndShowModal}
-              disabled={!message.trim() || message.length > 1000}
-              className={`w-full font-semibold py-4 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl transform hover:scale-105 relative overflow-hidden ${!message.trim() || message.length > 1000
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-rose-400 via-pink-400 to-purple-400 hover:from-rose-500 hover:via-pink-500 hover:to-purple-500 text-white cursor-pointer'
+              disabled={!message.trim() || message.length > charInfo.maxLength}
+              className={`w-full font-semibold py-4 px-8 rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl transform hover:scale-105 relative overflow-hidden ${!message.trim() || message.length > charInfo.maxLength
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-gradient-to-r from-rose-400 via-pink-400 to-purple-400 hover:from-rose-500 hover:via-pink-500 hover:to-purple-500 text-white cursor-pointer'
                 }`}
             >
               <span className="relative z-10">
-                {message.length > 1000 ? '文字数制限を超えています' : 'QRコードを生成する'}
+                {message.length > charInfo.maxLength ? '文字数制限を超えています' : 'QRコードを生成する'}
               </span>
-              {message.trim() && message.length <= 1000 && (
+              {message.trim() && message.length <= charInfo.maxLength && (
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 translate-x-full group-hover:translate-x-0 transition-transform duration-700"></div>
               )}
             </button>
           </div>
 
-            <ReviewModal open={showReviewModal} onClose={() => setShowReviewModal(false)} />
+          <ReviewModal open={showReviewModal} onClose={() => setShowReviewModal(false)} />
 
           {/* QRコード表示 */}
           {showQR && (
@@ -655,7 +651,7 @@ export default function HomePage() {
       >
         <div className="text-center">
           <p className="text-gray-600 mb-6">
-            メッセージが長すぎます。1000文字以内にしてください。
+            メッセージが長すぎます。{charInfo.maxLength}文字以内にしてください。
           </p>
           <ModalButton
             onClick={() => setShowMessageTooLongModal(false)}
