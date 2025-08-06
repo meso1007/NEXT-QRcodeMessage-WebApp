@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import LZString from 'lz-string';
 import { Heart, Star, Sparkles, Feather, Scroll } from 'lucide-react';
 
 interface MessageData {
@@ -57,11 +58,11 @@ const LetterPage = () => {
                 const base64Decoded = atob(encodedData);
                 const urlDecoded = decodeURIComponent(base64Decoded);
                 const jsonData = JSON.parse(urlDecoded);
-                
+
                 // 旧形式データでも安全な日付処理を適用
                 const formatDate = (timestamp: string | number | undefined) => {
                     if (!timestamp) return new Date().toLocaleDateString('ja-JP');
-                    
+
                     try {
                         const date = new Date(Number(timestamp));
                         if (isNaN(date.getTime())) {
@@ -74,15 +75,15 @@ const LetterPage = () => {
                         return new Date().toLocaleDateString('ja-JP');
                     }
                 };
-                
+
                 // 日付を安全に処理
                 const safeJsonData = {
                     ...jsonData,
                     created: formatDate(jsonData.created || jsonData.t)
                 };
-                
+
                 setMessageData(safeJsonData);
-                
+
                 setTimeout(() => {
                     setIsLoading(false);
                 }, 2000);
@@ -93,59 +94,26 @@ const LetterPage = () => {
                 setError(`メッセージの読み込みに失敗しました: ${errorMessage}`);
                 setIsLoading(false);
             }
-        } else if (hash.startsWith('#')) {
-            // 新形式の最適化データ処理
+        } else if (hash.startsWith('#') && hash.length > 1) {
+            // 新形式の lz-string データ処理
             try {
-                const encodedData = hash.substring(1);
-                
-                // 最適化デコード関数
-                const optimizedDecode = (encoded: string) => {
-                    // パディングを復元
-                    let padded = encoded;
-                    while (padded.length % 4) {
-                        padded += '=';
-                    }
-                    
-                    const decoded = atob(
-                        padded
-                            .replace(/-/g, '+')
-                            .replace(/_/g, '/')
-                    );
-                    
-                    const decodedString = decodeURIComponent(decoded)
-                        .replace(/~/g, ':')
-                        .replace(/\|/g, ',');
-                    
-                    // JSON構造を復元
-                    // 元の形式: "m:value,n:value,w:value,t:value"
-                    // 復元後: {"m":"value","n":"value","w":"value","t":"value"}
-                    
-                    // まず、キーと値のペアを分割
-                    const pairs = decodedString.split(',');
-                    const jsonObject: { [key: string]: string } = {};
-                    
-                    pairs.forEach(pair => {
-                        const [key, ...valueParts] = pair.split(':');
-                        if (key && valueParts.length > 0) {
-                            // 値の部分を結合（コロンが含まれる可能性があるため）
-                            const value = valueParts.join(':');
-                            jsonObject[key.trim()] = value.trim();
-                        }
-                    });
-                    
-                    return jsonObject;
-                };
+                const compressedData = hash.substring(1);
 
-                const jsonData = optimizedDecode(encodedData);
-                
+                // lz-stringで解凍
+                const jsonString = LZString.decompressFromEncodedURIComponent(compressedData);
+                if (!jsonString) {
+                    throw new Error("Decompression failed. The data might be corrupted or in an old format.");
+                }
+                const jsonData = JSON.parse(jsonString);
+
                 // デバッグ用ログ
-                console.log('Decoded JSON data:', jsonData);
+                console.log('Decompressed JSON data:', jsonData);
                 console.log('Timestamp value:', jsonData.t);
-                
+
                 // 安全な日付変換処理
                 const formatDate = (timestamp: string | number | undefined) => {
                     if (!timestamp) return new Date().toLocaleDateString('ja-JP');
-                    
+
                     try {
                         const date = new Date(Number(timestamp));
                         if (isNaN(date.getTime())) {
@@ -158,24 +126,24 @@ const LetterPage = () => {
                         return new Date().toLocaleDateString('ja-JP');
                     }
                 };
-                
+
                 // 新形式のデータを旧形式に変換
                 const convertedData: MessageData = {
-                    message: jsonData.m || jsonData.message || '',
-                    name: jsonData.n || jsonData.name || '匿名',
-                    writerName: jsonData.w || jsonData.writerName || '匿名',
+                    message: jsonData.m || '',
+                    name: jsonData.n || 'あなた',
+                    writerName: jsonData.w || 'わたし',
                     created: formatDate(jsonData.t),
-                    id: jsonData.id || 'generated-id'
+                    id: 'generated-id'
                 };
-                
+
                 setMessageData(convertedData);
-                
+
                 setTimeout(() => {
                     setIsLoading(false);
                 }, 2000);
 
             } catch (err) {
-                console.error('Optimized decoding error:', err);
+                console.error('lz-string decoding error:', err);
                 const errorMessage = err instanceof Error ? err.message : '不明なエラーが発生しました';
                 setError(`メッセージの読み込みに失敗しました: ${errorMessage}`);
                 setIsLoading(false);
@@ -206,9 +174,11 @@ const LetterPage = () => {
 
     useEffect(() => {
         if (showMessage && messageData?.message) {
+            const messageLength = messageData.message.length;
             const interval = setInterval(() => {
                 setCurrentWordIndex((prev) => {
-                    if (prev >= messageData.message.length - 1) {
+                    // メッセージの長さ以上にインデックスが増えないようにする
+                    if (prev >= messageLength) {
                         clearInterval(interval);
                         return prev;
                     }
@@ -355,7 +325,7 @@ const LetterPage = () => {
                             top: `${Math.random() * 100}%`,
                         }}
                         initial={{ opacity: 0, y: -50 }}
-                        animate={{ 
+                        animate={{
                             opacity: [0, 0.6, 0],
                             y: [0, 100],
                             x: [0, Math.random() * 50 - 25],
@@ -411,7 +381,7 @@ const LetterPage = () => {
                                 <div className="w-80 h-56 bg-gradient-to-br from-amber-100 to-amber-200 border-2 border-amber-300 relative shadow-xl">
                                     {/* 封筒の装飾 */}
                                     <div className="absolute inset-4 border border-amber-400 border-dashed opacity-50"></div>
-                                    
+
                                     {/* 宛名 */}
                                     <div className="absolute inset-0 flex items-center justify-center">
                                         <div className="text-center">
@@ -459,19 +429,19 @@ const LetterPage = () => {
                         >
                             {/* 手紙用紙 */}
                             <div className="bg-gradient-to-br from-cream-50 to-amber-50 p-8 md:p-12 shadow-2xl relative"
-                                 style={{
-                                     backgroundImage: `
+                                style={{
+                                    backgroundImage: `
                                          linear-gradient(90deg, #f59e0b10 1px, transparent 1px),
                                          linear-gradient(#f59e0b10 1px, transparent 1px)
                                      `,
-                                     backgroundSize: '20px 25px'
-                                 }}>
-                                
+                                    backgroundSize: '20px 25px'
+                                }}>
+
                                 {/* 紙の破れた効果 */}
                                 <div className="absolute inset-0 bg-white opacity-90 rounded-sm"
-                                     style={{
-                                         clipPath: 'polygon(0% 2%, 2% 0%, 98% 1%, 100% 3%, 99% 97%, 97% 100%, 3% 99%, 1% 98%)'
-                                     }}></div>
+                                    style={{
+                                        clipPath: 'polygon(0% 2%, 2% 0%, 98% 1%, 100% 3%, 99% 97%, 97% 100%, 3% 99%, 1% 98%)'
+                                    }}></div>
 
                                 <div className="relative z-10">
                                     {/* ヘッダー装飾 */}
@@ -489,7 +459,7 @@ const LetterPage = () => {
                                                 <Scroll className="w-8 h-8 text-amber-600 mr-3" />
                                             </motion.div>
                                             <h1 className="text-2xl md:text-3xl font-serif text-amber-800 italic">
-                                            {messageData.name}へ
+                                                {messageData.name}へ
                                             </h1>
                                             <motion.div
                                                 animate={{ rotate: [0, -5, 5, 0] }}
@@ -509,20 +479,16 @@ const LetterPage = () => {
                                                 animate={{ opacity: 1 }}
                                                 className="font-serif text-lg leading-relaxed text-amber-900 whitespace-pre-line"
                                             >
-                                                {messageData.message.split('').slice(0, currentWordIndex + 1).map((char, index) => (
+                                                {messageData.message.slice(0, currentWordIndex).split('').map((char, index) => (
                                                     <motion.span
                                                         key={index}
                                                         initial={{ opacity: 0, y: 10 }}
-                                                        animate={{ opacity: 1, y: 0 }}
-                                                        transition={{
-                                                            duration: 0.3,
-                                                            delay: index * 0.03
-                                                        }}
+                                                        animate={{ opacity: 1, y: 0, transition: { duration: 0.2 } }}
                                                     >
                                                         {char}
                                                     </motion.span>
                                                 ))}
-                                                
+
                                                 {/* タイピングカーソル */}
                                                 {currentWordIndex < messageData.message.length - 1 && (
                                                     <motion.span
@@ -608,7 +574,7 @@ const LetterPage = () => {
                                 top: `${Math.random() * 100}%`,
                             }}
                             initial={{ scale: 0, opacity: 0 }}
-                            animate={{ 
+                            animate={{
                                 scale: [0, 1, 0],
                                 opacity: [0, 1, 0],
                                 y: [0, -50]
