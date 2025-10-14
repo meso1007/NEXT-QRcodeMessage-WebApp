@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { Suspense } from "react";
 import Script from "next/script";
 import GAListener from "./pageview";
 
@@ -80,7 +81,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+  const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
 
   return (
     <html lang="ja">
@@ -92,18 +93,18 @@ export default function RootLayout({
               strategy="afterInteractive"
               src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
             />
-<Script
-  id="google-analytics"
-  strategy="afterInteractive"
-  dangerouslySetInnerHTML={{
-    __html: `
+            <Script
+              id="google-analytics"
+              strategy="afterInteractive"
+              dangerouslySetInnerHTML={{
+                __html: `
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', '${GA_TRACKING_ID}');
     `,
-  }}
-/>
+              }}
+            />
 
           </>
         )}
@@ -111,11 +112,13 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gradient-to-br from-pink-50 via-purple-50 to-indigo-50`}
       >
-        <GAListener>
-        <Header />
-        {children}
-        <Footer />
-        </GAListener>
+        <Suspense fallback={null}>
+          <GAListener>
+            <Header />
+            {children}
+            <Footer />
+          </GAListener>
+        </Suspense>
       </body>
     </html>
   );

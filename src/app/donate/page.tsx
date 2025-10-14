@@ -1,5 +1,5 @@
 "use client"
-import React, {useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Heart, Users, Target, Bird, Shield, Gift, CreditCard, Building, FolderDot, Globe, DollarSign, Router, TrafficCone } from 'lucide-react';
 import Link from 'next/link';
 import { gsap } from 'gsap';
