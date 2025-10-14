@@ -262,7 +262,7 @@ export default function HomePage() {
   };
 
   const charInfo = getCharacterInfo(message);
-  
+
   const copyToClipboard = async () => {
     const messageData = {
       m: message.trim(),
@@ -346,7 +346,7 @@ export default function HomePage() {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="例: 太郎"
+                  placeholder="例: お母さん"
                   className="w-full px-4 py-3 border border-pink-200 rounded-xl focus:ring-2 focus:ring-rose-300 focus:border-transparent transition-all duration-300 text-gray-700 bg-white/70 hover:bg-white/90"
                   maxLength={50}
                 />
@@ -373,7 +373,7 @@ export default function HomePage() {
                 <textarea
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  placeholder="大切な方への想いやメッセージをお書きください..."
+                  placeholder={`例:\n\n「お母さんへ。いつも見守ってくれてありがとう。」\n「◯◯へ。出会ってくれて本当に感謝しています。」\n\nむずかしく考えずに、浮かんだ言葉から書き始めてみてください。`}
                   className="w-full px-4 py-3 border border-pink-200 rounded-xl focus:ring-2 focus:ring-rose-300 focus:border-transparent transition-all duration-300 resize-none text-gray-700 bg-white/70 hover:bg-white/90"
                   rows={8}
                   maxLength={charInfo.maxLength}
