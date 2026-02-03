@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
 import LZString from 'lz-string';
 import { Heart, Star, Sparkles, Feather, Scroll } from 'lucide-react';
 
@@ -190,7 +190,7 @@ const LetterPage = () => {
         }
     }, [showMessage, messageData?.message]);
 
-    const envelopeVariants = {
+    const envelopeVariants: Variants = {
         hidden: { opacity: 0, scale: 0.8, y: 50 },
         visible: {
             opacity: 1,
@@ -211,7 +211,7 @@ const LetterPage = () => {
         }
     };
 
-    const letterVariants = {
+    const letterVariants: Variants = {
         hidden: { opacity: 0, y: 100, scale: 0.8 },
         visible: {
             opacity: 1,
@@ -224,7 +224,7 @@ const LetterPage = () => {
         }
     };
 
-    const sparkleVariants = {
+    const sparkleVariants: Variants = {
         hidden: { scale: 0, opacity: 0 },
         visible: {
             scale: [0, 1, 0],
