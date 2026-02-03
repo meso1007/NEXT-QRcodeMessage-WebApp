@@ -93,29 +93,26 @@ export default function HomePage() {
     return LZString.compressToEncodedURIComponent(jsonString);
   };
 
-  // 4. 最適化されたQRコード生成関数
+  // 4. 最適化されたQRコード生成関数（POSTリクエスト対応）
   const generateOptimizedQRCode = async () => {
     if (!message.trim()) {
       setShowMessageRequiredModal(true);
       return;
     }
 
-    // 新しい文字数制限（UIと合わせる）
     const maxLength = 5000;
     if (message.length > maxLength) {
       setShowMessageTooLongModal(true);
       return;
     }
 
-    // 超コンパクトなデータ構造
     const compactData = {
       m: message.trim(),
       n: name.trim() || '',
       w: writerName.trim() || '',
-      t: Date.now() // タイムスタンプを数値で保存（より短い）
+      t: Date.now()
     };
 
-    // lz-stringで圧縮
     const encodedData = compressData(compactData);
     const letterUrl = `${window.location.origin}/letter#${encodedData}`;
 
@@ -123,83 +120,62 @@ export default function HomePage() {
     console.log('Encoded data length:', encodedData.length);
     console.log('Final URL length:', letterUrl.length);
 
-    // QRコード生成設定（高密度対応）
     const qrConfig = {
-      size: '400x400',        // サイズを大きく
-      ecc: 'L',              // エラー訂正レベルを最低に（容量優先）
+      size: '400x400',
+      ecc: 'L',
       format: 'png',
-      margin: '0',           // マージンを最小に
-      qzone: '0'            // クワイエットゾーンを最小に
+      margin: '0',
+      qzone: '0'
     };
 
-    // 複数のQRサービス（容量制限が異なる）
-    const qrServices = [
-      // 1. QR Server（標準）
-      {
-        name: 'QR Server',
-        url: `https://api.qrserver.com/v1/create-qr-code/?size=${qrConfig.size}&data=${encodeURIComponent(letterUrl)}&format=${qrConfig.format}&ecc=${qrConfig.ecc}&margin=${qrConfig.margin}`,
-        maxLength: 2000
-      },
-
-      // 2. QRicKit（より大容量対応）
-      {
-        name: 'QRicKit',
-        url: `https://qrickit.com/api/qr?d=${encodeURIComponent(letterUrl)}&s=20&border=1&download=0`,
-        maxLength: 4000
-      },
-
-      // 3. QR-Code-Generator（高容量）
-      {
-        name: 'QR Code Generator',
-        url: `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(letterUrl)}&format=png&ecc=L&margin=1`,
-        maxLength: 3000
-      }
-    ];
-
-    // URLの長さに応じて適切なサービスを選択
-    const selectedService = qrServices.find(service => letterUrl.length <= service.maxLength) || qrServices[1];
-
-    console.log(`Using ${selectedService.name} for URL length: ${letterUrl.length}`);
-
-    // QRコード生成とテスト
+    // POSTリクエストでQRコードを生成（長文対応）
     try {
-      const testResponse = await fetch(selectedService.url, { method: 'HEAD' });
+      const formData = new FormData();
+      formData.append('data', letterUrl);
+      formData.append('size', qrConfig.size);
+      formData.append('ecc', qrConfig.ecc);
+      formData.append('margin', qrConfig.margin);
+      formData.append('qzone', qrConfig.qzone);
+      formData.append('format', qrConfig.format);
 
-      if (testResponse.ok) {
-        setQrCodeUrl(selectedService.url);
-        setShowQR(true);
-        console.log(`QR code generated successfully with ${selectedService.name}`);
-      } else {
-        throw new Error(`HTTP ${testResponse.status}`);
+      const response = await fetch('https://api.qrserver.com/v1/create-qr-code/', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
       }
+
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+
+      setQrCodeUrl(objectUrl);
+      setShowQR(true);
+      console.log('QR code generated successfully via POST');
+
     } catch (error) {
-      console.log(`Primary service failed:`, error);
+      console.error('Primary POST generation failed:', error);
 
-      // フォールバック: 次のサービスを試す
-      for (let i = 1; i < qrServices.length; i++) {
-        try {
-          const fallbackUrl = qrServices[i].url;
-          const testImg = new window.Image();
+      // フォールバック: QRicKit (GETリクエスト)
+      try {
+        // QRicKitは比較的長いURLに対応
+        const fallbackUrl = `https://qrickit.com/api/qr?d=${encodeURIComponent(letterUrl)}&s=20&border=1&download=0`;
 
-          await new Promise((resolve, reject) => {
-            testImg.onload = resolve;
-            testImg.onerror = reject;
-            testImg.src = fallbackUrl;
-          });
+        const testImg = new window.Image();
+        await new Promise((resolve, reject) => {
+          testImg.onload = resolve;
+          testImg.onerror = reject;
+          testImg.src = fallbackUrl;
+        });
 
-          setQrCodeUrl(fallbackUrl);
-          setShowQR(true);
-          console.log(`Fallback successful with ${qrServices[i].name}`);
-          return;
-
-        } catch (fallbackError) {
-          console.log(`Fallback ${qrServices[i].name} failed:`, fallbackError);
-          continue;
-        }
+        setQrCodeUrl(fallbackUrl);
+        setShowQR(true);
+        console.log('Fallback successful with QRicKit');
+      } catch (fallbackError) {
+        console.error('Fallback failed:', fallbackError);
+        handleQRGenerationFailure();
       }
-
-      // 全て失敗した場合の最終手段
-      handleQRGenerationFailure();
     }
   };
 
@@ -439,6 +415,7 @@ export default function HomePage() {
                   alt="Generated QR Code"
                   className="mx-auto animate-scale-in"
                   style={{ width: '300px', height: '300px' }}
+                  unoptimized // Blob URLを使用するため最適化をスキップ
                 />
               </div>
 

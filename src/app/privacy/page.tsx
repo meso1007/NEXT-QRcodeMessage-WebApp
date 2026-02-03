@@ -7,7 +7,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 // Register the plugin
 if (typeof window !== "undefined") {
-    gsap.registerPlugin(ScrollTrigger);
+  gsap.registerPlugin(ScrollTrigger);
 }
 
 type Subsection = {
@@ -230,7 +230,7 @@ const PrivacySection: FC<PrivacySectionProps> = ({ section, index }) => {
           {React.cloneElement(section.icon, {
             className: "text-white w-5 h-5",
           })}
-        </div>  
+        </div>
         <h2 className="text-2xl font-bold text-gray-800">{section.title}</h2>
       </div>
 
@@ -367,12 +367,12 @@ const PrivacyPolicyPage = () => {
           <div className="header-meta flex items-center justify-center space-x-4 text-sm text-gray-500">
             <div className="flex items-center space-x-1">
               <Calendar className="w-4 h-4" />
-              <span>最終更新: 2025年6月10日</span>
+              <span>最終更新: 2026年2月3日</span>
             </div>
             <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
             <div className="flex items-center space-x-1">
               <CheckCircle className="w-4 h-4" />
-              <span>第1版</span>
+              <span>v 2.7</span>
             </div>
           </div>
         </div>

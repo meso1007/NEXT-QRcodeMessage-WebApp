@@ -32,12 +32,6 @@ const CustomImage = forwardRef<HTMLImageElement, Imageprops>(({ src, alt, width,
 
 CustomImage.displayName = 'CustomImage';
 
-// const Link = ({ href, children, className }) => (
-//   <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
-//     {children}
-//   </a>
-// );
-
 const FiGithub = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
@@ -298,50 +292,59 @@ const AboutPage = () => {
               ref={titleRef}
               className="text-3xl font-extrabold text-gray-800 mb-6 tracking-tight opacity-0 transform translate-y-4"
             >
-              このサイトについて
+              運営方針とサービスについて
             </h2>
+
+            {/* 段落1: 協会のミッションと社会インフラとしての位置付け */}
             <p
               ref={(el) => {
                 paragraphsRef.current[0] = el;
               }}
               className="text-gray-700 leading-relaxed mb-5 text-base opacity-0 transform translate-y-4"
             >
-              このサービスは、<strong className="text-rose-500 font-semibold">大切な想い出やメッセージ</strong>を安心して残せる場所を作りたいという想いから生まれました。
-              何気ない日々の記憶や、伝えられなかった気持ちを、やさしくかたちに残せるよう設計しています。
+              本サービスは<span className="text-indigo-500 font-semibold">未来メッセージ協会</span>が運営しています。
+              私たちは、「万が一の時に備え、想いを遺す」ことを新たな社会インフラとして定着させるため、公益性を重視した活動を行っています。
             </p>
+
+            {/* 段落2: ソリューション（QRコードによる永続化） */}
             <p
               ref={(el) => {
                 paragraphsRef.current[1] = el;
               }} className="text-gray-700 leading-relaxed mb-5 text-base opacity-0 transform translate-y-4"
             >
-              現在は個人開発として運営していますが、技術・デザイン・想いを支えてくれる多くの人たちに助けられながら進めています。
-              中でも、<span className="text-indigo-500 font-semibold">フィードバックをくれる仲間や技術的にアドバイスをくれる開発者の方々</span>には心から感謝しています。
+              「もしも」は突然訪れます。本サービスでは、大切な人へのメッセージや生きた証を、<span className="text-indigo-500 font-semibold">QRコード</span>という物理的な形に変換し、永続的に保管可能にします。
+              事前の準備が、ご自身とご遺族の未来の安心に繋がります。
             </p>
+
+            {/* 段落3: 安全性と持続可能性（永久無料の根拠） */}
             <p
               ref={(el) => {
                 paragraphsRef.current[2] = el;
               }} className="text-gray-700 leading-relaxed mb-5 text-base opacity-0 transform translate-y-4"
             >
-              将来的には、<span className="text-indigo-500 font-semibold">自治体・教育機関・企業との連携</span>を通じて、
-              より多くの人に安心して使っていただけるサービスへと育てていきたいと考えています。
+              お客様のデータはサーバーに依存しない独自の仕組みで生成されるため、プライバシーは堅牢に守られます。
+              また、維持コストのかからない設計により、<strong className="text-rose-500 font-semibold">永久無料</strong>での提供を実現しました。経済的な負担なく、安心してご利用いただけます。
             </p>
+
+            {/* 段落4: 今後の展望とリンク */}
             <p
               ref={(el) => {
                 paragraphsRef.current[3] = el;
-              }} className="text-gray-600 italic text-sm opacity-0 transform translate-y-4"
+              }} className="text-gray-700 leading-relaxed mb-5 text-base opacity-0 transform translate-y-4"
             >
-              「思いを言葉にできる場所」を、ひとりでも多くの方へ。
+              今後も自治体や関連機関と連携し、この「想いのバトン」を社会全体で支える仕組みへと育ててまいります。
+              活動の詳細は<Link href="https://www.miraimessage.net/" className="text-indigo-500 font-semibold hover:underline" target="_blank" rel="noopener noreferrer">未来メッセージ協会 公式サイト</Link>をご覧ください。
             </p>
+
+            {/* 段落5: 理念（タグライン） */}
             <p
               ref={(el) => {
                 paragraphsRef.current[4] = el;
-              }} className="text-gray-700 leading-relaxed mt-6 text-base opacity-0 transform translate-y-4"
+              }} className="text-gray-600 italic text-sm opacity-0 transform translate-y-4 mt-8"
             >
-              このサービスは、ご遺族の皆さまの深い悲しみや心残りを少しでも和らげることを願い、
-              大切な方への想いを書き残す場所を提供しています。
-              できる限り完全無料で安心して使っていただけるよう努めており、
-              この想いが一人でも多くの方の心に届き、救いとなることを願っています。
+              「思いを言葉にできる場所」を、ひとりでも多くの方へ。
             </p>
+
           </div>
 
 
@@ -368,10 +371,12 @@ const AboutPage = () => {
             >
               SHOYA
             </h3>
+            {/* 変更点: ここに協会代表の肩書きを追加 */}
             <p
               ref={(el) => { profileTextRef.current[1] = el }}
               className="text-gray-600 text-sm mb-4 opacity-0 transform translate-y-4"
             >
+              <span className="block mb-1 text-indigo-600 font-medium">未来メッセージ協会 代表</span>
               Web Developer / Designer
             </p>
             <p
@@ -400,7 +405,7 @@ const AboutPage = () => {
               className="text-black text-xl flex items-center justify-center mt-5 space-x-2"
             >
               <Link
-                href="http://99.79.63.2/"
+                href="https://www.shoyahoriuchi.me/"
                 className="hover:bg-rose-400 hover:text-gray-100 rounded-full p-2 duration-300 transform transition-all"
               >
                 <FiGlobe />
@@ -427,7 +432,6 @@ const AboutPage = () => {
           </div>
         </div>
 
-        {/* 支援者への感謝セクション */}
         <div
           ref={thanksRef}
           className="mt-16 text-center text-sm text-gray-500"

@@ -10,11 +10,11 @@
   },
   "dependencies": {
     "framer-motion": "^12.16.0",
-    "googleapis": "^150.0.1",
+    "googleapis": "^171.1.0",
     "gsap": "^3.13.0",
     "lucide-react": "^0.513.0",
     "lz-string": "^1.5.0",
-    "next": "15.3.3",
+    "next": "^16.1.6",
     "react": "^19.0.0",
     "react-countup": "^6.5.3",
     "react-dom": "^19.0.0",
@@ -24,7 +24,6 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "@types/lz-string": "^1.5.0",
     "@types/node": "^20.19.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
