@@ -2,9 +2,10 @@
   "name": "otodoke",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "bun@1.3.11",
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/generate-sitemap.js && next build",
+    "build": "bun scripts/generate-sitemap.js && next build",
     "start": "next start",
     "lint": "next lint"
   },

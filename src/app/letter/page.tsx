@@ -263,7 +263,7 @@ const LetterPage = () => {
                 duration: 2,
                 repeat: Infinity,
                 repeatDelay: 1,
-                ease: "easeInOut"
+                ease: "easeInOut" as const,
             }
         }
     };

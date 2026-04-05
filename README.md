@@ -25,6 +25,7 @@ OtoDoke is a platform designed to help you preserve and share your heartfelt mes
 ### Development Tools
 | Technology | Version | Selection Reason |
 |------------|---------|-----------------|
+| Bun | 1.3+ | Package manager and script runner (`bun install`, `bun run`); lockfile is `bun.lock` |
 | ESLint | 8.56.0 | Maintains code quality and enforces consistent coding style |
 | Prettier | 3.1.0 | Ensures consistent code formatting across the project |
 | Jest | 29.7.0 | Unit and snapshot testing. Optimal for React component testing |
@@ -141,8 +142,7 @@ OtoDoke is a platform designed to help you preserve and share your heartfelt mes
 ## Getting Started
 
 ### Prerequisites
-- Node.js 18.0.0 or higher
-- npm 9.0.0 or higher
+- [Bun](https://bun.sh/) 1.3 or higher (installs and runs the app; Node.js is not required locally)
 
 ### Installation
 1. Clone the repository
@@ -153,20 +153,20 @@ OtoDoke is a platform designed to help you preserve and share your heartfelt mes
 
 2. Install dependencies
    ```bash
-   npm install
+   bun install
    ```
 
 3. Start the development server
    ```bash
-   npm run dev
+   bun run dev
    ```
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ### Building for Production
 ```bash
-npm run build
-npm start
+bun run build
+bun run start
 ```
 
 ## Contributing

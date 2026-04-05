@@ -1,21 +1,14 @@
-# Base image
-FROM node:20-alpine
+FROM oven/bun:1-alpine
 
-# Set working directory
 WORKDIR /app
 
-# Install dependencies
-COPY package*.json ./
-RUN npm install
+COPY package.json bun.lock ./
+RUN bun install --frozen-lockfile
 
-# Copy project files
 COPY . .
 
-# Build application
-RUN npm run build
+RUN bun run build
 
-# Expose port
 EXPOSE 3000
 
-# Start application
-CMD ["npm", "start"] 
+CMD ["bun", "run", "start"]
