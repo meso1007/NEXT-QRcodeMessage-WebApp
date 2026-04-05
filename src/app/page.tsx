@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Heart, QrCode, Shield, Download, Copy, Check, Sparkles, Lock, Clock, Users } from 'lucide-react';
 import CountUp from 'react-countup';
 import Image from 'next/image';
+import QRCode from 'qrcode';
 import Modal, { ConfirmModal, ModalButton } from '@/components/Modal';
 import ReviewModal from '@/components/ReviewModal';
 
@@ -128,82 +129,16 @@ export default function HomePage() {
     console.log('Encoded data length:', encodedData.length);
     console.log('Final URL length:', letterUrl.length);
 
-    // QRコード生成設定（高密度対応）
-    const qrConfig = {
-      size: '400x400',        // サイズを大きく
-      ecc: 'L',              // エラー訂正レベルを最低に（容量優先）
-      format: 'png',
-      margin: '0',           // マージンを最小に
-      qzone: '0'            // クワイエットゾーンを最小に
-    };
-
-    // 複数のQRサービス（容量制限が異なる）
-    const qrServices = [
-      // 1. QR Server（標準）
-      {
-        name: 'QR Server',
-        url: `https://api.qrserver.com/v1/create-qr-code/?size=${qrConfig.size}&data=${encodeURIComponent(letterUrl)}&format=${qrConfig.format}&ecc=${qrConfig.ecc}&margin=${qrConfig.margin}`,
-        maxLength: 2000
-      },
-
-      // 2. QRicKit（より大容量対応）
-      {
-        name: 'QRicKit',
-        url: `https://qrickit.com/api/qr?d=${encodeURIComponent(letterUrl)}&s=20&border=1&download=0`,
-        maxLength: 4000
-      },
-
-      // 3. QR-Code-Generator（高容量）
-      {
-        name: 'QR Code Generator',
-        url: `https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=${encodeURIComponent(letterUrl)}&format=png&ecc=L&margin=1`,
-        maxLength: 3000
-      }
-    ];
-
-    // URLの長さに応じて適切なサービスを選択
-    const selectedService = qrServices.find(service => letterUrl.length <= service.maxLength) || qrServices[1];
-
-    console.log(`Using ${selectedService.name} for URL length: ${letterUrl.length}`);
-
-    // QRコード生成とテスト
     try {
-      const testResponse = await fetch(selectedService.url, { method: 'HEAD' });
-
-      if (testResponse.ok) {
-        setQrCodeUrl(selectedService.url);
-        setShowQR(true);
-        console.log(`QR code generated successfully with ${selectedService.name}`);
-      } else {
-        throw new Error(`HTTP ${testResponse.status}`);
-      }
+      const dataUrl = await QRCode.toDataURL(letterUrl, {
+        errorCorrectionLevel: 'L',
+        margin: 1,
+        width: 400,
+      });
+      setQrCodeUrl(dataUrl);
+      setShowQR(true);
     } catch (error) {
-      console.log(`Primary service failed:`, error);
-
-      // フォールバック: 次のサービスを試す
-      for (let i = 1; i < qrServices.length; i++) {
-        try {
-          const fallbackUrl = qrServices[i].url;
-          const testImg = new window.Image();
-
-          await new Promise((resolve, reject) => {
-            testImg.onload = resolve;
-            testImg.onerror = reject;
-            testImg.src = fallbackUrl;
-          });
-
-          setQrCodeUrl(fallbackUrl);
-          setShowQR(true);
-          console.log(`Fallback successful with ${qrServices[i].name}`);
-          return;
-
-        } catch (fallbackError) {
-          console.log(`Fallback ${qrServices[i].name} failed:`, fallbackError);
-          continue;
-        }
-      }
-
-      // 全て失敗した場合の最終手段
+      console.error('Client-side QR generation failed:', error);
       handleQRGenerationFailure();
     }
   };
@@ -443,6 +378,7 @@ export default function HomePage() {
                   alt="Generated QR Code"
                   className="mx-auto animate-scale-in"
                   style={{ width: '300px', height: '300px' }}
+                  unoptimized
                 />
               </div>
 
