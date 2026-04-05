@@ -198,7 +198,7 @@ const LetterPage = () => {
             y: 0,
             transition: {
                 duration: 1,
-                ease: "easeOut"
+                ease: "easeOut" as const,
             }
         },
         opened: {
@@ -206,7 +206,7 @@ const LetterPage = () => {
             y: -20,
             transition: {
                 duration: 0.5,
-                ease: "easeOut"
+                ease: "easeOut" as const,
             }
         }
     };
@@ -219,7 +219,7 @@ const LetterPage = () => {
             scale: 1,
             transition: {
                 duration: 1.2,
-                ease: "easeOut"
+                ease: "easeOut" as const,
             }
         }
     };
@@ -233,7 +233,7 @@ const LetterPage = () => {
                 duration: 2,
                 repeat: Infinity,
                 repeatDelay: 1,
-                ease: "easeInOut"
+                ease: "easeInOut" as const,
             }
         }
     };
@@ -256,7 +256,7 @@ const LetterPage = () => {
                 >
                     <motion.div
                         animate={{ rotate: 360 }}
-                        transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                        transition={{ duration: 3, repeat: Infinity, ease: "linear" as const }}
                         className="w-16 h-16 border-4 border-pink-300 border-t-transparent rounded-full mx-auto mb-4"
                     />
                     <motion.p
@@ -335,7 +335,7 @@ const LetterPage = () => {
                             duration: Math.random() * 8 + 5,
                             repeat: Infinity,
                             delay: Math.random() * 10,
-                            ease: "easeInOut"
+                            ease: "easeInOut" as const,
                         }}
                     >
                         <Feather className="w-4 h-4 text-pink-300/60" />
@@ -397,7 +397,7 @@ const LetterPage = () => {
                                             clipPath: 'polygon(0 100%, 50% 0, 100% 100%)'
                                         }}
                                         animate={isEnvelopeOpened ? { rotateX: -180 } : { rotateX: 0 }}
-                                        transition={{ duration: 1.5, ease: "easeInOut" }}
+                                        transition={{ duration: 1.5, ease: "easeInOut" as const }}
                                     >
                                         {/* ワックスシール風 */}
                                         <div className="absolute top-6 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-red-600 rounded-full border-2 border-red-700 flex items-center justify-center">
@@ -582,7 +582,7 @@ const LetterPage = () => {
                             transition={{
                                 duration: 3,
                                 delay: Math.random() * 2,
-                                ease: "easeOut"
+                                ease: "easeOut" as const,
                             }}
                         >
                             <Sparkles className="w-4 h-4 text-pink-400" />

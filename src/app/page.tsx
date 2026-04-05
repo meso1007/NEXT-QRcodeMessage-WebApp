@@ -5,6 +5,7 @@ import { Heart, QrCode, Shield, Download, Copy, Check, Sparkles, Lock, Clock, Us
 import LZString from 'lz-string';
 import CountUp from 'react-countup';
 import Image from 'next/image';
+import QRCode from 'qrcode';
 import Modal, { ConfirmModal, ModalButton } from '@/components/Modal';
 import ReviewModal from '@/components/ReviewModal';
 
@@ -120,62 +121,17 @@ export default function HomePage() {
     console.log('Encoded data length:', encodedData.length);
     console.log('Final URL length:', letterUrl.length);
 
-    const qrConfig = {
-      size: '400x400',
-      ecc: 'L',
-      format: 'png',
-      margin: '0',
-      qzone: '0'
-    };
-
-    // POSTリクエストでQRコードを生成（長文対応）
     try {
-      const formData = new FormData();
-      formData.append('data', letterUrl);
-      formData.append('size', qrConfig.size);
-      formData.append('ecc', qrConfig.ecc);
-      formData.append('margin', qrConfig.margin);
-      formData.append('qzone', qrConfig.qzone);
-      formData.append('format', qrConfig.format);
-
-      const response = await fetch('https://api.qrserver.com/v1/create-qr-code/', {
-        method: 'POST',
-        body: formData
+      const dataUrl = await QRCode.toDataURL(letterUrl, {
+        errorCorrectionLevel: 'L',
+        margin: 1,
+        width: 400,
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-
-      const blob = await response.blob();
-      const objectUrl = URL.createObjectURL(blob);
-
-      setQrCodeUrl(objectUrl);
+      setQrCodeUrl(dataUrl);
       setShowQR(true);
-      console.log('QR code generated successfully via POST');
-
     } catch (error) {
-      console.error('Primary POST generation failed:', error);
-
-      // フォールバック: QRicKit (GETリクエスト)
-      try {
-        // QRicKitは比較的長いURLに対応
-        const fallbackUrl = `https://qrickit.com/api/qr?d=${encodeURIComponent(letterUrl)}&s=20&border=1&download=0`;
-
-        const testImg = new window.Image();
-        await new Promise((resolve, reject) => {
-          testImg.onload = resolve;
-          testImg.onerror = reject;
-          testImg.src = fallbackUrl;
-        });
-
-        setQrCodeUrl(fallbackUrl);
-        setShowQR(true);
-        console.log('Fallback successful with QRicKit');
-      } catch (fallbackError) {
-        console.error('Fallback failed:', fallbackError);
-        handleQRGenerationFailure();
-      }
+      console.error('Client-side QR generation failed:', error);
+      handleQRGenerationFailure();
     }
   };
 
@@ -415,7 +371,7 @@ export default function HomePage() {
                   alt="Generated QR Code"
                   className="mx-auto animate-scale-in"
                   style={{ width: '300px', height: '300px' }}
-                  unoptimized // Blob URLを使用するため最適化をスキップ
+                  unoptimized
                 />
               </div>
 
