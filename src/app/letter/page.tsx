@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
-import LZString from 'lz-string';
 import { Heart, Star, Sparkles, Feather, Scroll } from 'lucide-react';
 
 interface MessageData {
@@ -97,17 +96,6 @@ const LetterPage = () => {
         } else if (hash.startsWith('#') && hash.length > 1) {
             // 新形式の lz-string データ処理
             try {
-<<<<<<< HEAD
-                const compressedData = hash.substring(1);
-
-                // lz-stringで解凍
-                const jsonString = LZString.decompressFromEncodedURIComponent(compressedData);
-                if (!jsonString) {
-                    throw new Error("Decompression failed. The data might be corrupted or in an old format.");
-                }
-                const jsonData = JSON.parse(jsonString);
-
-=======
                 const encodedData = hash.substring(1);
 
                 // 最適化デコード関数
@@ -149,8 +137,6 @@ const LetterPage = () => {
                 };
 
                 const jsonData = optimizedDecode(encodedData);
-
->>>>>>> develop
                 // デバッグ用ログ
                 console.log('Decompressed JSON data:', jsonData);
                 console.log('Timestamp value:', jsonData.t);

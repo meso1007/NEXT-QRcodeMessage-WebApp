@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Heart, QrCode, Shield, Download, Copy, Check, Sparkles, Lock, Clock, Users } from 'lucide-react';
-import LZString from 'lz-string';
 import CountUp from 'react-countup';
 import Image from 'next/image';
 import QRCode from 'qrcode';
@@ -87,13 +86,29 @@ export default function HomePage() {
     return () => clearInterval(timer);
   }, []);
 
-  // 2. lz-string を使用したデータ圧縮
+  // 2. 最適化エンコード処理 (lz-stringの代替)
   const compressData = (data: { [key: string]: string | number }) => {
-    const jsonString = JSON.stringify(data);
-    // compressToEncodedURIComponent は、圧縮後の文字列をURLで安全に使用できるようにエンコードします。
-    return LZString.compressToEncodedURIComponent(jsonString);
-  };
+    // 1. "キー:値,キー:値" の文字列に変換
+    const pairs = Object.entries(data).map(([key, value]) => `${key}:${value}`);
+    const joinedString = pairs.join(',');
 
+    // 2. 記号の置換（デコード時の replace(/~/g, ':') 等の逆操作）
+    const replacedString = joinedString
+      .replace(/:/g, '~')
+      .replace(/,/g, '|');
+
+    // 3. URLエンコード
+    const uriEncoded = encodeURIComponent(replacedString);
+
+    // 4. Base64エンコード
+    const base64Encoded = btoa(uriEncoded);
+
+    // 5. URLセーフな文字列に変換し、末尾のパディング(=)を削除
+    return base64Encoded
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
+  };
   // 4. 最適化されたQRコード生成関数（POSTリクエスト対応）
   const generateOptimizedQRCode = async () => {
     if (!message.trim()) {
