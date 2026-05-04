@@ -97,6 +97,7 @@ const LetterPage = () => {
         } else if (hash.startsWith('#') && hash.length > 1) {
             // 新形式の lz-string データ処理
             try {
+<<<<<<< HEAD
                 const compressedData = hash.substring(1);
 
                 // lz-stringで解凍
@@ -106,6 +107,50 @@ const LetterPage = () => {
                 }
                 const jsonData = JSON.parse(jsonString);
 
+=======
+                const encodedData = hash.substring(1);
+
+                // 最適化デコード関数
+                const optimizedDecode = (encoded: string) => {
+                    // パディングを復元
+                    let padded = encoded;
+                    while (padded.length % 4) {
+                        padded += '=';
+                    }
+
+                    const decoded = atob(
+                        padded
+                            .replace(/-/g, '+')
+                            .replace(/_/g, '/')
+                    );
+
+                    const decodedString = decodeURIComponent(decoded)
+                        .replace(/~/g, ':')
+                        .replace(/\|/g, ',');
+
+                    // JSON構造を復元
+                    // 元の形式: "m:value,n:value,w:value,t:value"
+                    // 復元後: {"m":"value","n":"value","w":"value","t":"value"}
+
+                    // まず、キーと値のペアを分割
+                    const pairs = decodedString.split(',');
+                    const jsonObject: { [key: string]: string } = {};
+
+                    pairs.forEach(pair => {
+                        const [key, ...valueParts] = pair.split(':');
+                        if (key && valueParts.length > 0) {
+                            // 値の部分を結合（コロンが含まれる可能性があるため）
+                            const value = valueParts.join(':');
+                            jsonObject[key.trim()] = value.trim();
+                        }
+                    });
+
+                    return jsonObject;
+                };
+
+                const jsonData = optimizedDecode(encodedData);
+
+>>>>>>> develop
                 // デバッグ用ログ
                 console.log('Decompressed JSON data:', jsonData);
                 console.log('Timestamp value:', jsonData.t);
