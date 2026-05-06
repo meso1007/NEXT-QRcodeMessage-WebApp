@@ -1,186 +1,103 @@
-# OTODOKE LIFE - Message for the Future
+# OTODOKE LIFE
+
+OTODOKE LIFE is a web application for creating heartfelt messages and sharing them through QR codes.  
+It is designed for simple creation, elegant reading, and easy access on both desktop and mobile devices.
+
+## Table of Contents
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [Screens](#screens)
+- [Technology Stack](#technology-stack)
+- [Contact](#contact)
 
 ## Overview
-OtoDoke is a platform designed to help you preserve and share your heartfelt messages with loved ones. Whether it's for special occasions, daily gratitude, or future communications, our service provides a secure and elegant way to keep your thoughts and feelings alive.
 
-## 🛠 Technology Stack
+The app allows users to:
+- Create and store a message.
+- Generate a QR code linked to that message.
+- Share the QR code so recipients can read the message from a dedicated letter view.
 
-### Frontend
-| Technology | Version | Selection Reason |
-|------------|---------|-----------------|
-| Next.js | 14.0.0 | Optimal for SEO with server-side rendering and static generation. Leverages the latest App Router features |
-| React | 18.2.0 | Component-based development with efficient virtual DOM rendering. Large community and rich ecosystem |
-| TypeScript | 5.3.0 | Enhanced development efficiency through type safety and early bug detection. Improved code readability and maintainability |
-| Tailwind CSS | 3.4.0 | Rapid UI development with utility-first approach. High customizability and performance optimization |
-| Framer Motion | 10.16.0 | Smooth animations and interactions. Excellent React integration with declarative animation syntax |
-| GSAP | 3.12.0 | Advanced animation control and performance optimization. Ideal for complex animation sequences |
+In addition to the core message flow, the project includes supporting pages such as Terms, Privacy Policy, FAQ, Donate, and About.
 
-### Backend & Infrastructure
-| Technology | Version | Selection Reason |
-|------------|---------|-----------------|
-| Node.js | 18.17.0 | Stable LTS version. High performance through asynchronous processing and event-driven architecture |
-| Vercel | Latest | Excellent Next.js integration with global CDN. Automated deployments and scalability |
+## Key Features
 
+- **Message creation flow** with QR code generation.
+- **Letter view experience** optimized for readability and presentation.
+- **Informational pages** for Terms, Privacy Policy, FAQ, Donate, and About.
+- **Responsive UI** built for modern browsers and mobile devices.
+- **Type-safe codebase** using TypeScript and Next.js App Router.
 
-### Development Tools
-| Technology | Version | Selection Reason |
-|------------|---------|-----------------|
-| Bun | 1.3+ | Package manager and script runner (`bun install`, `bun run`); lockfile is `bun.lock` |
-| ESLint | 8.56.0 | Maintains code quality and enforces consistent coding style |
-| Prettier | 3.1.0 | Ensures consistent code formatting across the project |
-| Jest | 29.7.0 | Unit and snapshot testing. Optimal for React component testing |
-| GitHub Actions | - | Automated CI/CD pipeline. Maintains code quality and efficient deployment |
+## Screens
 
-### Performance & Analytics
-| Technology | Version | Selection Reason |
-|------------|---------|-----------------|
-| Google Analytics | 4 | User behavior analysis and performance measurement. Comprehensive free analytics tool |
-
-
-### Key Technical Decisions
-1. **Performance Focus**
-   - Fast initial load times
-   - Smooth animations
-   - Optimized bundle size
-
-2. **Development Efficiency**
-   - Type safety for early bug detection
-   - Rich developer tools
-   - Active community support
-
-3. **Scalability**
-   - Serverless architecture
-   - Global CDN
-   - Auto-scaling capabilities
-
-4. **Security**
-   - Latest security practices
-   - Regular updates
-   - Robust authentication system
-
-## Features
-
-### Home Page (/)
-- Intuitive message creation form
-- QR code generation
-- Service overview
-- User-friendly interface for seamless experience
+### Home (`/`)
+- Message input and QR code generation
+- Service introduction
 
 ![Home Page](./public/readme/topPage.png)
 ![QR Code Generation](./public/readme/topPage2.png)
 
----
-
-### Letter View Page (/letter)
-- Access messages via QR code
-- Animated message display
-- Sender information and timestamp
-- Elegant presentation
+### Letter (`/letter`)
+- QR-based message access
+- Animated reveal and sender metadata
 
 ![Letter Unopened Page](./public/readme/letterPage.png)
 ![Letter Opened Page](./public/readme/letterPage2.png)
 
----
-
-### Terms of Service (/terms)
-- Comprehensive service terms
-- Interactive table of contents
-- Easy navigation between sections
+### Terms (`/terms`)
+- Terms of service with structured navigation
 
 ![Terms of Service Page](./public/readme/termsPage.png)
 
----
-
-### Privacy Policy (/privacy)
-- Detailed privacy guidelines
-- Data handling policies
-- Contact information
-- User rights and responsibilities
+### Privacy (`/privacy`)
+- Privacy policy and data handling guidance
 
 ![Privacy Policy Page](./public/readme/privacyPage.png)
 
----
-
-### FAQ Section (/faq)
-- Categorized common questions
-- Search functionality
-- Comprehensive answers
-- Regular updates
+### FAQ (`/faq`)
+- Categorized Q&A with search
 
 ![FAQ Page](./public/readme/faqPage.png)
 
----
-
-### Donation Page (/donate)
-- Support options
-- Donation methods
-- Recognition for contributors
-- Impact transparency
+### Donate (`/donate`)
+- Donation options and support information
 
 ![Donation Page](./public/readme/donatePage.png)
 
----
-
-### About Page (/about)
-- Developer introduction
-- Service mission and vision
-- Social media links
-- Project background
+### About (`/about`)
+- Project and developer background
 
 ![About Page](./public/readme/aboutPage.png)
 
----
+## Technology Stack
 
-## Technical Features
-- Message creation and QR code generation
-- Privacy policy and terms of service integration
-- Comprehensive FAQ system
-- Contact form functionality
-- Responsive design
-- Cross-browser compatibility
+### Frontend
+| Technology | Version |
+|------------|---------|
+| Next.js | 14.0.0 |
+| React | 18.2.0 |
+| TypeScript | 5.3.0 |
+| Tailwind CSS | 3.4.0 |
+| Framer Motion | 10.16.0 |
+| GSAP | 3.12.0 |
 
-## Getting Started
+### Runtime / Infrastructure
+| Technology | Version |
+|------------|---------|
+| Bun | 1.3+ |
+| Node.js | 18.17.0 |
+| Vercel | Latest |
 
-### Prerequisites
-- [Bun](https://bun.sh/) 1.3 or higher (installs and runs the app; Node.js is not required locally)
-
-### Installation
-1. Clone the repository
-   ```bash
-   git clone https://github.com/meso1007/NEXT-QRcodeMessage-WebApp
-   cd otodoke
-   ```
-
-2. Install dependencies
-   ```bash
-   bun install
-   ```
-
-3. Start the development server
-   ```bash
-   bun run dev
-   ```
-
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
-
-### Building for Production
-```bash
-bun run build
-bun run start
-```
-
-## Contributing
-We welcome contributions! Please read our [Contributing Guidelines](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
-
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-- Special thanks to all contributors and supporters
-- Inspired by the need for meaningful digital communication
-- Built with ❤️ for a better future
+### Tooling / Quality
+| Technology | Version |
+|------------|---------|
+| ESLint | 8.56.0 |
+| Prettier | 3.1.0 |
+| Jest | 29.7.0 |
+| GitHub Actions | - |
+| Google Analytics | 4 |
 
 ## Contact
-- Email: diegoshoya2017@gmail.com
-- Website: [http://99.79.63.2/](http://99.79.63.2/)
-- GitHub: [@meso1007](https://github.com/meso1007)
+
+- Email: [diegoshoya2017@gmail.com](mailto:diegoshoya2017@gmail.com)
+- Website: [https://www.otodokelife.com/](https://www.otodokelife.com/)
+- GitHub Repo: [https://github.com/meso1007/NEXT-QRcodeMessage-WebApp](https://github.com/meso1007/NEXT-QRcodeMessage-WebApp)
